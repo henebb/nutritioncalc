@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import IdModal from "./IdModal";
 import "./add-ingredient.css";
 
-function AddIngredient({ added }) {
+function AddIngredient({ added, ingredients }) {
   const [name, setName] = useState("");
 
   const [preDefinedIngredients, setPreDefinedIngredients] = useState([]);
@@ -43,6 +43,15 @@ function AddIngredient({ added }) {
     setName(""); // Clear input
   }
 
+  function handleIdClick(shortName) {
+    const newItem = preDefinedIngredients.find((i) => i.short === shortName);
+    if (newItem == null) {
+      // Shouldn ot happen, but anyway...
+      return;
+    }
+    added(newItem);
+  }
+
   return (
     <form className="row add-form " onSubmit={handleSubmit}>
       <div className="col-5">
@@ -73,7 +82,8 @@ function AddIngredient({ added }) {
       <div className="col-1">
         <IdModal
           preDefinedIngredients={preDefinedIngredients}
-          handleClick={setName}
+          handleClick={handleIdClick}
+          ingredients={ingredients}
         />
       </div>
     </form>

@@ -143,7 +143,7 @@ function App() {
   return (
     <div>
       <div className="ingredients-container">
-        <AddIngredient added={addIngredient} />
+        <AddIngredient added={addIngredient} ingredients={ingredients} />
         {ingredients.length > 0 ? (
           ingredients.map((ingredient) => (
             <Card

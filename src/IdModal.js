@@ -1,4 +1,17 @@
-function IdModal({ preDefinedIngredients, handleClick }) {
+import { useState } from "react";
+
+function IdModal({ preDefinedIngredients, ingredients, handleClick }) {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredIngredients = preDefinedIngredients
+    .map((ingredient) => {
+      return {
+        ...ingredient,
+        disabled: ingredients.some((i) => i.name === ingredient.name),
+      };
+    })
+    .filter((ingredient) => ingredient.name.includes(searchTerm));
+
   return (
     <>
       <button
@@ -30,32 +43,59 @@ function IdModal({ preDefinedIngredients, handleClick }) {
               />
             </div>
             <div className="modal-body">
-              <ul className="list-group">
-                {preDefinedIngredients
+              <div className="pb-1 border-bottom">
+                <label htmlFor="searchTerm">Sök</label>
+                <input
+                  type="text"
+                  id="searchTerm"
+                  className="form-control"
+                  placeholder="Ange namn..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <ul className="list-group pt-1">
+                {filteredIngredients
                   .sort((a, b) => (a.name > b.name ? 1 : -1))
                   .map((i) => (
                     <button
                       type="button"
-                      class="list-group-item list-group-item-action"
+                      className={
+                        "list-group-item list-group-item-action " +
+                        (i.disabled ? "bg-light" : null) +
+                        " bg-gradient"
+                      }
                       data-bs-dismiss="modal"
-                      onClick={() => handleClick(i.short)}
+                      onClick={() => {
+                        handleClick(i.short);
+                        setSearchTerm("");
+                      }}
                       key={i.short}
+                      disabled={i.disabled}
                     >
                       <span
                         style={{
                           display: "inline-block",
                           width: "16em",
                           borderRight: "1px solid gray",
+                          color: i.disabled ? "lightgray" : "inherit",
                         }}
                       >
                         {i.name}
                       </span>
-                      <strong style={{ paddingLeft: "1em" }}>{i.short}</strong>
+                      <strong
+                        style={{
+                          paddingLeft: "1em",
+                          color: i.disabled ? "lightgray" : "inherit",
+                        }}
+                      >
+                        {i.short}
+                      </strong>
                     </button>
                   ))}
               </ul>
             </div>
-            {preDefinedIngredients.length > 20 ? (
+            {filteredIngredients.length > 20 ? (
               <div class="modal-footer">
                 <button
                   type="button"

@@ -65,47 +65,52 @@ function Card({
       <div className="row">
         <div className="col-2">
           <input
-            type="text"
+            type="number"
             value={ingredient.weight}
             onChange={(e) => {
               updateWeight(ingredient.name, e.target.value);
             }}
+            className="form-control form-control-sm"
           />
         </div>
         <div className="col-2">
           <input
-            type="text"
+            type="number"
             value={ingredient.kcal}
             onChange={(e) => {
               updateKcal(ingredient.name, e.target.value);
             }}
+            className="form-control form-control-sm"
           />
         </div>
         <div className="col-2">
           <input
-            type="text"
+            type="number"
             value={ingredient.proteins}
             onChange={(e) => {
               updateProteins(ingredient.name, e.target.value);
             }}
+            className="form-control form-control-sm"
           />
         </div>
         <div className="col-2">
           <input
-            type="text"
+            type="number"
             value={ingredient.fat}
             onChange={(e) => {
               updateFat(ingredient.name, e.target.value);
             }}
+            className="form-control form-control-sm"
           />
         </div>
         <div className="col-2">
           <input
-            type="text"
+            type="number"
             value={ingredient.carbs}
             onChange={(e) => {
               updateCarbs(ingredient.name, e.target.value);
             }}
+            className="form-control form-control-sm"
           />
         </div>
       </div>
