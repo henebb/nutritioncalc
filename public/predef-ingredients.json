@@ -1,0 +1,65 @@
+[
+  {
+    "name": "kyckling",
+    "short": "ky",
+    "weight": 150,
+    "kcal": 107,
+    "proteins": 23,
+    "fat": 1.5,
+    "carbs": 0
+  },
+  {
+    "name": "lätt creme fraiche",
+    "short": "lcf",
+    "weight": 100,
+    "kcal": 150,
+    "proteins": 3.1,
+    "fat": 13,
+    "carbs": 3.9
+  },
+  {
+    "name": "matlagningsgrädde",
+    "short": "mlg",
+    "weight": 100,
+    "kcal": 150,
+    "proteins": 3.1,
+    "fat": 13,
+    "carbs": 4.2
+  },
+  {
+    "name": "spaghetti",
+    "short": "spg",
+    "weight": 65,
+    "kcal": 359,
+    "proteins": 12.8,
+    "fat": 2,
+    "carbs": 70.9
+  },
+  {
+    "name": "köttfärs 5%",
+    "short": "kf5",
+    "weight": 150,
+    "kcal": 129,
+    "proteins": 21,
+    "fat": 5,
+    "carbs": 0
+  },
+  {
+    "name": "tortilla",
+    "short": "ta",
+    "weight": 40,
+    "kcal": 310,
+    "proteins": 10,
+    "fat": 4.9,
+    "carbs": 55
+  },
+  {
+    "name": "havrebröd",
+    "short": "hb",
+    "weight": 50,
+    "kcal": 242,
+    "proteins": 13,
+    "fat": 3.5,
+    "carbs": 37
+  }
+]
