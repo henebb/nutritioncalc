@@ -335,7 +335,7 @@
   {
     "name": "chark - prosciutto",
     "short": "cpr",
-    "weight": 25.0,
+    "weight": 50.0,
     "kcal": 225.0,
     "proteins": 27.0,
     "fat": 13.0,
@@ -344,7 +344,7 @@
   {
     "name": "chark - salami milano",
     "short": "csm",
-    "weight": 25.0,
+    "weight": 50.0,
     "kcal": 349.0,
     "proteins": 26.0,
     "fat": 27.0,
@@ -353,7 +353,7 @@
   {
     "name": "chark - tryffelsalami",
     "short": "cst",
-    "weight": 25.0,
+    "weight": 50.0,
     "kcal": 360.0,
     "proteins": 24.0,
     "fat": 32.0,
@@ -371,7 +371,7 @@
   {
     "name": "chark - bondost",
     "short": "cbo",
-    "weight": 25.0,
+    "weight": 30.0,
     "kcal": 355.0,
     "proteins": 21.2,
     "fat": 29.1,
@@ -380,7 +380,7 @@
   {
     "name": "chark - vit castello",
     "short": "cvc",
-    "weight": 25.0,
+    "weight": 30.0,
     "kcal": 410.0,
     "proteins": 14.0,
     "fat": 39.0,
@@ -389,7 +389,7 @@
   {
     "name": "chark - breton-kex",
     "short": "cbk",
-    "weight": 50.0,
+    "weight": 25.0,
     "kcal": 482.0,
     "proteins": 11.2,
     "fat": 19.6,
