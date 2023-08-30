@@ -9,6 +9,15 @@
     "carbs": 3.9
   },
   {
+    "name": "matlagningsgrädde 13%",
+    "short": "mg13",
+    "weight": 0.0,
+    "kcal": 150.0,
+    "proteins": 3.1,
+    "fat": 13.0,
+    "carbs": 4.2
+  },
+  {
     "name": "flankstek",
     "short": "fls",
     "weight": 0.0,
@@ -208,7 +217,7 @@
   },
   {
     "name": "fläskfärs",
-    "short": "fls",
+    "short": "flfs",
     "weight": 0.0,
     "kcal": 240.0,
     "proteins": 16.0,
@@ -394,5 +403,23 @@
     "proteins": 11.2,
     "fat": 19.6,
     "carbs": 65.3
+  },
+  {
+    "name": "tomatpure",
+    "short": "tmp",
+    "weight": 10.0,
+    "kcal": 90.0,
+    "proteins": 4.5,
+    "fat": 0.5,
+    "carbs": 16.0
+  },
+  {
+    "name": "proteinpudding",
+    "short": "ppu",
+    "weight": 180.0,
+    "kcal": 84.0,
+    "proteins": 11.0,
+    "fat": 1.5,
+    "carbs": 6.2
   }
 ]

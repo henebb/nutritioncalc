@@ -96,7 +96,7 @@ function IdModal({ preDefinedIngredients, ingredients, handleClick }) {
               </ul>
             </div>
             {filteredIngredients.length > 20 ? (
-              <div class="modal-footer">
+              <div className="modal-footer">
                 <button
                   type="button"
                   className="btn btn-primary btn-sm"
