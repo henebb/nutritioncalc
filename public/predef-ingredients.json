@@ -421,5 +421,14 @@
     "proteins": 11.0,
     "fat": 1.5,
     "carbs": 6.2
+  },
+  {
+    "name": "havregryn",
+    "short": "hgr",
+    "weight": 50.0,
+    "kcal": 370.0,
+    "proteins": 12.0,
+    "fat": 7.0,
+    "carbs": 60.0
   }
 ]

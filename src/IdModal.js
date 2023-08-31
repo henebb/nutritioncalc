@@ -10,7 +10,9 @@ function IdModal({ preDefinedIngredients, ingredients, handleClick }) {
         disabled: ingredients.some((i) => i.name === ingredient.name),
       };
     })
-    .filter((ingredient) => ingredient.name.includes(searchTerm));
+    .filter((ingredient) =>
+      ingredient.name.toLocaleLowerCase("sv-SE").includes(searchTerm)
+    );
 
   return (
     <>
@@ -51,7 +53,9 @@ function IdModal({ preDefinedIngredients, ingredients, handleClick }) {
                   className="form-control"
                   placeholder="Ange namn..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) =>
+                    setSearchTerm(e.target.value.toLocaleLowerCase("sv-SE"))
+                  }
                 />
               </div>
               <ul className="list-group pt-1">
