@@ -1,7 +1,4 @@
-.add-form {
-  margin-bottom: 12px;
-}
-.add-form .btn {
-  padding-left: 2em;
-  padding-right: 2em;
+.add-form .btn,
+.id-modal .btn {
+  width: 100px;
 }

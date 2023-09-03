@@ -1,20 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import IdModal from "./IdModal";
 import "./add-ingredient.css";
 
-function AddIngredient({ added, ingredients }) {
+function AddIngredient() {
   const [name, setName] = useState("");
-
-  const [preDefinedIngredients, setPreDefinedIngredients] = useState([]);
-
-  // Empty dependency array will cause to only load once
-  useEffect(() => {
-    fetch("predef-ingredients.json", { method: "GET", cache: "no-store" })
-      .then((response) => response.json())
-      .then((json) => {
-        setPreDefinedIngredients(json);
-      });
-  }, []);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -53,40 +42,65 @@ function AddIngredient({ added, ingredients }) {
   }
 
   return (
-    <form className="row add-form " onSubmit={handleSubmit}>
-      <div className="col-5">
-        <label
-          className="visually-hidden visually-hidden-focusable"
-          htmlFor="newIngredientName"
-        >
-          Ingrediens
-        </label>
-        <input
-          id="newIngredientName"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="form-control"
-          placeholder="Ingrediens"
-        />
+    <>
+      <form className="row add-form mb-2" onSubmit={handleSubmit}>
+        <div className="col-5">
+          <label
+            className="visually-hidden visually-hidden-focusable"
+            htmlFor="newIngredientName"
+          >
+            Ingrediens
+          </label>
+          <input
+            id="newIngredientName"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="form-control"
+            placeholder="Ingrediens"
+          />
+        </div>
+        <div className="col-6">
+          <button
+            type="submit"
+            className="btn btn-primary btn-sm"
+            disabled={!name}
+          >
+            Lägg till
+          </button>
+        </div>
+      </form>
+      <div className="row mb-2 id-modal">
+        <div className="col-5">
+          {apiKeyAvailable ? (
+            <IdModal
+              preDefinedIngredients={preDefinedIngredients}
+              handleClick={handleIdClick}
+              ingredients={ingredients}
+              functionKeyAvailable={apiKeyAvailable}
+            />
+          ) : (
+            <input
+              type="text"
+              className="form-control"
+              value={editApiKey}
+              onChange={(e) => setEditApiKey(e.target.value)}
+            />
+          )}
+        </div>
+        {!apiKeyAvailable && (
+          <div className="col-6">
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => handleApiKey(editApiKey)}
+            >
+              OK
+            </button>
+          </div>
+        )}
       </div>
-      <div className="col-4">
-        <button
-          type="submit"
-          className="btn btn-primary btn-sm"
-          disabled={!name}
-        >
-          Lägg till
-        </button>
-      </div>
-      <div className="col-1">
-        <IdModal
-          preDefinedIngredients={preDefinedIngredients}
-          handleClick={handleIdClick}
-          ingredients={ingredients}
-        />
-      </div>
-    </form>
+    </>
   );
 }
 

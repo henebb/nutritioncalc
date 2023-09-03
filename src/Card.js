@@ -1,16 +1,10 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import "./card.css";
+import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
 
-function Card({
-  ingredient,
-  updateName,
-  updateWeight,
-  updateKcal,
-  updateProteins,
-  updateFat,
-  updateCarbs,
-  deleteIngredient,
-}) {
+function Card({ ingredient }) {
+  const { dispatch } = useNutritionData();
+
   const calcTotal = useCallback(
     (value) => (value * 0.01 * ingredient.weight).toFixed(),
     [ingredient.weight]
@@ -41,15 +35,24 @@ function Card({
             value={ingredient.name}
             className="ingredient-name"
             onChange={(e) => {
-              updateName(ingredient.name, e.target.value);
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, name: e.target.value },
+              });
             }}
           />
         </div>
         <div className="col-2" style={{ textAlign: "right" }}>
+          {/* Delete ingredient */}
           <button
             className="btn btn-sm btn-danger"
             type="button"
-            onClick={() => deleteIngredient(ingredient.name)}
+            onClick={() => {
+              dispatch({
+                type: nutritionActionTypes.deleteChosenIngredient,
+                payload: ingredient.name,
+              });
+            }}
           >
             <i className="bi bi-trash3"></i>
           </button>
@@ -68,7 +71,10 @@ function Card({
             type="number"
             value={ingredient.weight}
             onChange={(e) => {
-              updateWeight(ingredient.name, e.target.value);
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, weight: e.target.value },
+              });
             }}
             className="form-control form-control-sm"
           />
@@ -78,7 +84,10 @@ function Card({
             type="number"
             value={ingredient.kcal}
             onChange={(e) => {
-              updateKcal(ingredient.name, e.target.value);
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, kcal: e.target.value },
+              });
             }}
             className="form-control form-control-sm"
           />
@@ -88,7 +97,10 @@ function Card({
             type="number"
             value={ingredient.proteins}
             onChange={(e) => {
-              updateProteins(ingredient.name, e.target.value);
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, proteins: e.target.value },
+              });
             }}
             className="form-control form-control-sm"
           />
@@ -98,7 +110,10 @@ function Card({
             type="number"
             value={ingredient.fat}
             onChange={(e) => {
-              updateFat(ingredient.name, e.target.value);
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, fat: e.target.value },
+              });
             }}
             className="form-control form-control-sm"
           />
@@ -108,7 +123,10 @@ function Card({
             type="number"
             value={ingredient.carbs}
             onChange={(e) => {
-              updateCarbs(ingredient.name, e.target.value);
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, carbs: e.target.value },
+              });
             }}
             className="form-control form-control-sm"
           />
