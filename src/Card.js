@@ -50,6 +50,8 @@ function Card({ ingredient }) {
             onClick={() => {
               dispatch({
                 type: nutritionActionTypes.deleteChosenIngredient,
+                // Use "name" as payload, since it might be added as a manual ingredient,
+                // and then it has no "short".
                 payload: ingredient.name,
               });
             }}

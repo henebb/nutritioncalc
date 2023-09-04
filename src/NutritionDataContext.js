@@ -9,11 +9,14 @@ import {
 const apiKeyName = "apiKey";
 
 const chosenIngredientsStorageKeyName = "chosenIngredients";
+
 // Preload data from local storage
+const localStoredChosenIngredients = JSON.parse(
+  localStorage.getItem(chosenIngredientsStorageKeyName)
+);
+
 const initialNutritionData = {
-  chosenIngredients: JSON.parse(
-    localStorage.getItem(chosenIngredientsStorageKeyName)
-  ),
+  chosenIngredients: localStoredChosenIngredients ?? [],
   preDefinedIngredients: [],
 };
 
@@ -32,19 +35,29 @@ function nutritionStoreReducer(state, action) {
       // You can add a manual ingredient (without "short"), so check duplicate on name)
       const nameLowerCased = action.payload.name.toLocaleLowerCase("sv-SE");
       if (state.chosenIngredients.some((i) => i.name === nameLowerCased)) {
-        alert("Denna ingrediens finns redan tillagd");
-        return;
+        return state;
       }
       const updatedIngredient = { ...action.payload, name: nameLowerCased };
 
+      const updatedChosenIngredients = [
+        updatedIngredient,
+        ...state.chosenIngredients,
+      ];
+      // Also store in local storage:
+      localStorage.setItem(
+        chosenIngredientsStorageKeyName,
+        JSON.stringify(updatedChosenIngredients)
+      );
       return {
-        chosenIngredients: [updatedIngredient, ...state.chosenIngredients],
+        chosenIngredients: updatedChosenIngredients,
         preDefinedIngredients: state.preDefinedIngredients,
       };
     case nutritionActionTypes.deleteChosenIngredient:
       return {
+        // Use "name" here, since it might be added as a manual ingredient,
+        // and then it has no "short"
         chosenIngredients: state.chosenIngredients.filter(
-          (i) => i.short !== action.payload
+          (i) => i.name !== action.payload
         ),
         preDefinedIngredients: state.preDefinedIngredients,
       };
@@ -140,6 +153,7 @@ function NutritionDataProvider({ children }) {
       value={{
         nutritionData: nutritionData,
         dispatch: dispatch,
+        apiKey: apiKey,
         handleApiKey: handleApiKey,
       }}
     >

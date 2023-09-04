@@ -1,13 +1,19 @@
 import { useState } from "react";
+import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
 
-function IdModal({ preDefinedIngredients, ingredients, handleClick }) {
+function IdModal() {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredIngredients = preDefinedIngredients
+  const { nutritionData, dispatch } = useNutritionData();
+
+  const filteredIngredients = nutritionData.preDefinedIngredients
     .map((ingredient) => {
       return {
         ...ingredient,
-        disabled: ingredients.some((i) => i.name === ingredient.name),
+        // Set "disabled" if already a chosen ingredient
+        disabled: nutritionData.chosenIngredients.some(
+          (i) => i.name === ingredient.name
+        ),
       };
     })
     .filter((ingredient) =>
@@ -59,47 +65,59 @@ function IdModal({ preDefinedIngredients, ingredients, handleClick }) {
                 />
               </div>
               <ul className="list-group pt-1">
-                {filteredIngredients
-                  .sort((a, b) => (a.name > b.name ? 1 : -1))
-                  .map((i) => (
-                    <button
-                      type="button"
-                      className={
-                        "list-group-item list-group-item-action " +
-                        (i.disabled ? "bg-light" : null) +
-                        " bg-gradient"
-                      }
-                      data-bs-dismiss="modal"
-                      onClick={() => {
-                        handleClick(i.short);
-                        setSearchTerm("");
-                      }}
-                      key={i.short}
-                      disabled={i.disabled}
-                    >
-                      <span
-                        style={{
-                          display: "inline-block",
-                          width: "16em",
-                          borderRight: "1px solid gray",
-                          color: i.disabled ? "lightgray" : "inherit",
+                {filteredIngredients != null &&
+                  filteredIngredients
+                    .sort((a, b) => (a.name > b.name ? 1 : -1))
+                    .map((filteredIngredient) => (
+                      <button
+                        type="button"
+                        className={
+                          "list-group-item list-group-item-action " +
+                          (filteredIngredient.disabled ? "bg-light" : null) +
+                          " bg-gradient"
+                        }
+                        data-bs-dismiss="modal"
+                        onClick={() => {
+                          dispatch({
+                            type: nutritionActionTypes.addChosenIngredient,
+                            // Don't add "filteredIngredient" as payload since it contains "disabled" prop as well.
+                            payload: nutritionData.preDefinedIngredients.find(
+                              (pre) => pre.short === filteredIngredient.short
+                            ),
+                          });
+                          // Clear field
+                          setSearchTerm("");
                         }}
+                        key={filteredIngredient.short}
+                        disabled={filteredIngredient.disabled}
                       >
-                        {i.name}
-                      </span>
-                      <strong
-                        style={{
-                          paddingLeft: "1em",
-                          color: i.disabled ? "lightgray" : "inherit",
-                        }}
-                      >
-                        {i.short}
-                      </strong>
-                    </button>
-                  ))}
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: "16em",
+                            borderRight: "1px solid gray",
+                            color: filteredIngredient.disabled
+                              ? "lightgray"
+                              : "inherit",
+                          }}
+                        >
+                          {filteredIngredient.name}
+                        </span>
+                        <strong
+                          style={{
+                            paddingLeft: "1em",
+                            color: filteredIngredient.disabled
+                              ? "lightgray"
+                              : "inherit",
+                          }}
+                        >
+                          {filteredIngredient.short}
+                        </strong>
+                      </button>
+                    ))}
               </ul>
             </div>
-            {filteredIngredients.length > 20 ? (
+            {filteredIngredients != null && filteredIngredients.length > 20 ? (
               <div className="modal-footer">
                 <button
                   type="button"

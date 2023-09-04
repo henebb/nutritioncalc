@@ -10,7 +10,8 @@ function CardList() {
       nutritionData.chosenIngredients != null &&
       nutritionData.chosenIngredients.length > 0 ? (
         nutritionData.chosenIngredients.map((ingredient) => (
-          <Card ingredient={ingredient} />
+          // use "name" as key, since "short" might not be set (if added manually)
+          <Card ingredient={ingredient} key={ingredient.name} />
         ))
       ) : (
         <div className="container-fluid">

@@ -1,17 +1,26 @@
 import { useState } from "react";
 import IdModal from "./IdModal";
 import "./add-ingredient.css";
+import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
 
 function AddIngredient() {
   const [name, setName] = useState("");
+  const [editApiKey, setEditApiKey] = useState("");
+  const [alreadyChosen, setAlreadyChosen] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const { nutritionData, dispatch, apiKey, handleApiKey } = useNutritionData();
+
+  const apiKeyAvailable = apiKey != null && apiKey !== "";
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    const existingPreDef = preDefinedIngredients.find(
-      (i) =>
-        i.name === name.toLocaleLowerCase("sv-SE") ||
-        i.short === name.toLocaleLowerCase("sv-SE")
+    const nameLowerCased = name.toLocaleLowerCase("sv-SE");
+
+    // Check if the name exists in the list of predefined,
+    // if so, fetch it from that list and use it as the added item.
+    const existingPreDef = nutritionData.preDefinedIngredients.find(
+      (i) => i.name === nameLowerCased || i.short === nameLowerCased
     );
 
     let newItem = {};
@@ -28,17 +37,25 @@ function AddIngredient() {
       };
     }
 
-    added(newItem);
-    setName(""); // Clear input
-  }
+    // Check if already a chosen ingredient
+    if (nutritionData.chosenIngredients.some((i) => i.name === newItem.name)) {
+      // Show, and auto-hide, warning.
+      // Use timers to allow animation to complete
+      setAlreadyChosen(true);
+      setTimeout(() => setShowAlert(true), 10);
+      // Hide
+      setTimeout(() => setShowAlert(false), 1000);
+      setTimeout(() => setAlreadyChosen(false), 1200);
 
-  function handleIdClick(shortName) {
-    const newItem = preDefinedIngredients.find((i) => i.short === shortName);
-    if (newItem == null) {
-      // Shouldn ot happen, but anyway...
+      setName("");
       return;
     }
-    added(newItem);
+
+    dispatch({
+      type: nutritionActionTypes.addChosenIngredient,
+      payload: newItem,
+    });
+    setName(""); // Clear input
   }
 
   return (
@@ -70,15 +87,24 @@ function AddIngredient() {
           </button>
         </div>
       </form>
+      {alreadyChosen && (
+        <div className="row">
+          <div className="col-5">
+            <div
+              className={`alert alert-info alert-dismissible fade ${
+                showAlert ? "show" : "hide"
+              } p-2 mb-2`}
+              role="alert"
+            >
+              Ingrediensen är redan tillagd
+            </div>
+          </div>
+        </div>
+      )}
       <div className="row mb-2 id-modal">
         <div className="col-5">
           {apiKeyAvailable ? (
-            <IdModal
-              preDefinedIngredients={preDefinedIngredients}
-              handleClick={handleIdClick}
-              ingredients={ingredients}
-              functionKeyAvailable={apiKeyAvailable}
-            />
+            <IdModal />
           ) : (
             <input
               type="text"
