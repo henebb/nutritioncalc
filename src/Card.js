@@ -3,7 +3,7 @@ import "./card.css";
 import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
 
 function Card({ ingredient }) {
-  const [name, setName] = useState(ingredient.name);
+  const [name, setName] = useState(`${ingredient.name}`);
   const { dispatch } = useNutritionData();
 
   const calcTotal = useCallback(
@@ -37,6 +37,10 @@ function Card({ ingredient }) {
             className="ingredient-name"
             onChange={(e) => setName(e.target.value.toLocaleLowerCase("sv-SE"))}
             onBlur={(e) => {
+              if (name === ingredient.name) {
+                // Unchanged
+                return;
+              }
               dispatch({
                 type: nutritionActionTypes.updateChosenIngredientName,
                 payload: { oldName: ingredient.name, newName: name },

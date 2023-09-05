@@ -30,6 +30,13 @@ const nutritionActionTypes = {
   updatePreDefIngredient: "UPDATE_PREDEF_INGREDIENT",
 };
 
+function updateLocalStore(chosenIngredients) {
+  localStorage.setItem(
+    chosenIngredientsStorageKeyName,
+    JSON.stringify(chosenIngredients)
+  );
+}
+
 function nutritionStoreReducer(state, action) {
   switch (action.type) {
     case nutritionActionTypes.addChosenIngredient:
@@ -44,17 +51,16 @@ function nutritionStoreReducer(state, action) {
         updatedIngredient,
         ...state.chosenIngredients,
       ];
-      // Also store in local storage:
-      localStorage.setItem(
-        chosenIngredientsStorageKeyName,
-        JSON.stringify(updatedChosenIngredients)
-      );
-      return {
+      const newStateAfterAdd = {
         chosenIngredients: updatedChosenIngredients,
         preDefinedIngredients: state.preDefinedIngredients,
       };
+      // Also store in local storage:
+      updateLocalStore(newStateAfterAdd.chosenIngredients);
+
+      return newStateAfterAdd;
     case nutritionActionTypes.deleteChosenIngredient:
-      const chosenIngredientsAfterDelete = {
+      const newStateAfterDelete = {
         // Use "name" here, since it might be added as a manual ingredient,
         // and then it has no "short"
         chosenIngredients: state.chosenIngredients.filter(
@@ -63,11 +69,9 @@ function nutritionStoreReducer(state, action) {
         preDefinedIngredients: state.preDefinedIngredients,
       };
       // Also store in local storage:
-      localStorage.setItem(
-        chosenIngredientsStorageKeyName,
-        JSON.stringify(chosenIngredientsAfterDelete)
-      );
-      return chosenIngredientsAfterDelete;
+      updateLocalStore(newStateAfterDelete.chosenIngredients);
+
+      return newStateAfterDelete;
     case nutritionActionTypes.updateChosenIngredientName:
       // Check if already exists
       let newName = action.payload.newName;
@@ -77,7 +81,7 @@ function nutritionStoreReducer(state, action) {
         newName = `${newName}_ny`;
       }
 
-      const chosenIngredientsAfterUpdate = {
+      const newStateAfterUpdate = {
         chosenIngredients: state.chosenIngredients.map((i) =>
           i.name === action.payload.oldName
             ? { ...i, name: newName.toLocaleLowerCase("sv-SE") }
@@ -86,11 +90,9 @@ function nutritionStoreReducer(state, action) {
         preDefinedIngredients: state.preDefinedIngredients,
       };
       // Also store in local storage:
-      localStorage.setItem(
-        chosenIngredientsStorageKeyName,
-        JSON.stringify(chosenIngredientsAfterUpdate)
-      );
-      return chosenIngredientsAfterUpdate;
+      updateLocalStore(newStateAfterUpdate.chosenIngredients);
+
+      return newStateAfterUpdate;
     case nutritionActionTypes.updateChosenIngredient:
       const ingredientToUpdate = {
         ...action.payload,
@@ -115,7 +117,8 @@ function nutritionStoreReducer(state, action) {
             ? ""
             : action.payload.carbs.toString().replace(",", "."),
       };
-      return {
+
+      const newStateAfterItemUpdate = {
         // Use "name" here, since it might be added as a manual ingredient,
         // and then it has no "short"
         chosenIngredients: state.chosenIngredients.map((i) =>
@@ -123,6 +126,10 @@ function nutritionStoreReducer(state, action) {
         ),
         preDefinedIngredients: state.preDefinedIngredients,
       };
+      // Also store in local storage:
+      updateLocalStore(newStateAfterItemUpdate.chosenIngredients);
+
+      return newStateAfterItemUpdate;
     case nutritionActionTypes.loadPreDefIngredients:
       return {
         chosenIngredients: state.chosenIngredients,

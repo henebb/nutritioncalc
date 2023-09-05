@@ -14,6 +14,7 @@ function Summary({ target }) {
         carbs: 0,
       };
     }
+
     // Only use ingredients that have valid numbers
     const validIngredients = nutritionData.chosenIngredients.filter(
       (i) =>
