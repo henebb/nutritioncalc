@@ -1,8 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import "./card.css";
 import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
 
 function Card({ ingredient }) {
+  const [name, setName] = useState(ingredient.name);
   const { dispatch } = useNutritionData();
 
   const calcTotal = useCallback(
@@ -32,12 +33,13 @@ function Card({ ingredient }) {
         <div className="col-10">
           <input
             type="text"
-            value={ingredient.name}
+            value={name}
             className="ingredient-name"
-            onChange={(e) => {
+            onChange={(e) => setName(e.target.value.toLocaleLowerCase("sv-SE"))}
+            onBlur={(e) => {
               dispatch({
-                type: nutritionActionTypes.updateChosenIngredient,
-                payload: { ...ingredient, name: e.target.value },
+                type: nutritionActionTypes.updateChosenIngredientName,
+                payload: { oldName: ingredient.name, newName: name },
               });
             }}
           />
@@ -71,6 +73,7 @@ function Card({ ingredient }) {
         <div className="col-2">
           <input
             type="number"
+            className="form-control form-control-sm"
             value={ingredient.weight}
             onChange={(e) => {
               dispatch({
@@ -78,12 +81,21 @@ function Card({ ingredient }) {
                 payload: { ...ingredient, weight: e.target.value },
               });
             }}
-            className="form-control form-control-sm"
+            onBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, weight: 0 },
+                });
+              }
+            }}
           />
         </div>
         <div className="col-2">
           <input
             type="number"
+            className="form-control form-control-sm"
             value={ingredient.kcal}
             onChange={(e) => {
               dispatch({
@@ -91,12 +103,21 @@ function Card({ ingredient }) {
                 payload: { ...ingredient, kcal: e.target.value },
               });
             }}
-            className="form-control form-control-sm"
+            onBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, kcal: 0 },
+                });
+              }
+            }}
           />
         </div>
         <div className="col-2">
           <input
             type="number"
+            className="form-control form-control-sm"
             value={ingredient.proteins}
             onChange={(e) => {
               dispatch({
@@ -104,12 +125,21 @@ function Card({ ingredient }) {
                 payload: { ...ingredient, proteins: e.target.value },
               });
             }}
-            className="form-control form-control-sm"
+            onBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, proteins: 0 },
+                });
+              }
+            }}
           />
         </div>
         <div className="col-2">
           <input
             type="number"
+            className="form-control form-control-sm"
             value={ingredient.fat}
             onChange={(e) => {
               dispatch({
@@ -117,12 +147,21 @@ function Card({ ingredient }) {
                 payload: { ...ingredient, fat: e.target.value },
               });
             }}
-            className="form-control form-control-sm"
+            onBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, fat: 0 },
+                });
+              }
+            }}
           />
         </div>
         <div className="col-2">
           <input
             type="number"
+            className="form-control form-control-sm"
             value={ingredient.carbs}
             onChange={(e) => {
               dispatch({
@@ -130,7 +169,15 @@ function Card({ ingredient }) {
                 payload: { ...ingredient, carbs: e.target.value },
               });
             }}
-            className="form-control form-control-sm"
+            onBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, carbs: 0 },
+                });
+              }
+            }}
           />
         </div>
       </div>
