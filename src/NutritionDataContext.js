@@ -5,6 +5,7 @@ import {
   useEffect,
   useReducer,
 } from "react";
+import { updateApiKey } from "./api";
 
 const apiKeyName = "apiKey";
 
@@ -170,37 +171,10 @@ function NutritionDataProvider({ children }) {
     initialNutritionData
   );
 
-  // Empty dependency array will cause to only load once
   useEffect(() => {
-    // No api key?
-    if (!apiKey) {
-      return;
-    }
-    // Already loaded?
-    if (nutritionData.preDefinedIngredients.length > 0) {
-      return;
-    }
-    fetch("https://fn-22plrgrwvmnok.azurewebsites.net/api/nutritions", {
-      method: "GET",
-      cache: "no-store",
-      headers: {
-        "x-functions-key": apiKey,
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        dispatch({
-          type: nutritionActionTypes.loadPreDefIngredients,
-          payload: json,
-        });
-      });
-  }, [apiKey, nutritionData, dispatch]);
-
-  // If apiKey is set, set localStorage and reload page.
-  function handleApiKey(newApiKey) {
-    localStorage.setItem(apiKeyName, newApiKey);
-    setApiKey(newApiKey);
-  }
+    localStorage.setItem(apiKeyName, apiKey);
+    updateApiKey(apiKey);
+  }, [apiKey]);
 
   return (
     <NutritionDataContext.Provider
@@ -208,7 +182,7 @@ function NutritionDataProvider({ children }) {
         nutritionData: nutritionData,
         dispatch: dispatch,
         apiKey: apiKey,
-        handleApiKey: handleApiKey,
+        setApiKey: setApiKey,
       }}
     >
       {children}

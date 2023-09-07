@@ -8,19 +8,20 @@ function AddIngredient() {
   const [editApiKey, setEditApiKey] = useState("");
   const [alreadyChosen, setAlreadyChosen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const { nutritionData, dispatch, apiKey, handleApiKey } = useNutritionData();
+  const { nutritionData, dispatch, apiKey, setApiKey } = useNutritionData();
 
   const apiKeyAvailable = apiKey != null && apiKey !== "";
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    const nameLowerCased = name.toLocaleLowerCase("sv-SE");
+    const nameLowerCasedTrimmed = name.toLocaleLowerCase("sv-SE").trim();
 
     // Check if the name exists in the list of predefined,
     // if so, fetch it from that list and use it as the added item.
     const existingPreDef = nutritionData.preDefinedIngredients.find(
-      (i) => i.name === nameLowerCased || i.short === nameLowerCased
+      (i) =>
+        i.name === nameLowerCasedTrimmed || i.short === nameLowerCasedTrimmed
     );
 
     let newItem = {};
@@ -119,7 +120,7 @@ function AddIngredient() {
             <button
               type="button"
               className="btn btn-secondary btn-sm"
-              onClick={() => handleApiKey(editApiKey)}
+              onClick={() => setApiKey(editApiKey)}
             >
               OK
             </button>

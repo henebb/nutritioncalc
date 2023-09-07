@@ -1,14 +1,108 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
+import { getAllNutritions, isIdAvailable } from "./api";
+
+const initialmanagePreDefinedData = {
+  isAddMode: false,
+  isEditMode: false,
+  isEditModeInit: false,
+  formId: "",
+  formName: "",
+  formIsValid: false,
+  formIsIdAvailable: false,
+  formIdAvailabilityCheckInProgress: false,
+  formIdAvailabilityChecked: false,
+};
+
+const managePreDefinedActionTypes = {
+  setAddMode: "SET_ADD_MODE",
+  initEditMode: "INIT_EDIT_MODE",
+  cancelInitEditMode: "CANCEL_INIT_EDIT_MODE",
+  setFormIdValue: "SET_FORM_ID_VALUE",
+  setFormIdAvailable: "SET_FORM_ID_AVAILABLE",
+  setFormIdAvailabilityInProgress: "SET_FORM_ID_AVAILABLITY_IN_PROGRESS",
+  resetFormIdAvailabilityChecked: "RESET_FORM_ID_AVAILABLILITY_CHECKED",
+  setFormName: "SET_FORM_NAME",
+  cancelForm: "CANCEL_FORM",
+};
+
+function managePreDefinedReducer(state, action) {
+  switch (action.type) {
+    case managePreDefinedActionTypes.setAddMode:
+      return {
+        ...state,
+        isAddMode: true,
+        isEditMode: false,
+        isEditModeInit: false,
+      };
+    case managePreDefinedActionTypes.initEditMode:
+      return {
+        ...state,
+        isAddMode: false,
+        isEditMode: false,
+        isEditModeInit: true,
+      };
+    case managePreDefinedActionTypes.cancelInitEditMode:
+      return {
+        ...state,
+        isEditModeInit: false,
+        isAddMode: false,
+        isEditMode: false,
+      };
+    case managePreDefinedActionTypes.setFormIdValue:
+      return {
+        ...state,
+        formId: action.payload,
+      };
+    case managePreDefinedActionTypes.setFormIdAvailabilityInProgress:
+      return {
+        ...state,
+        formIdAvailabilityCheckInProgress: action.payload,
+      };
+    case managePreDefinedActionTypes.setFormIdAvailable:
+      const isAvailable = action.payload;
+      return {
+        ...state,
+        formIsIdAvailable: isAvailable,
+        formIdAvailabilityChecked: true,
+        formIdAvailabilityCheckInProgress: false,
+        // If not avaible, mark form as not valid. Otherwise keep current flag
+        formIsValid: isFormValid(state.formId, isAvailable, state.formName),
+      };
+    case managePreDefinedActionTypes.resetFormIdAvailabilityChecked:
+      return {
+        ...state,
+        formIdAvailabilityChecked: false,
+        formIsIdAvailable: false,
+        formIsValid: false,
+      };
+    case managePreDefinedActionTypes.setFormName:
+      return {
+        ...state,
+        formName: action.payload,
+        formIsValid: isFormValid(
+          state.formId,
+          state.formIsIdAvailable,
+          action.payload
+        ),
+      };
+    case managePreDefinedActionTypes.cancelForm:
+      return initialmanagePreDefinedData;
+    default:
+      return state;
+  }
+}
+
+function isFormValid(id, idAvailable, name) {
+  return id && idAvailable && name && name.trim();
+}
 
 function IdModal() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isAddMode, setIsAddMode] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [newId, setNewId] = useState("");
-  const [isNewIdValid, setIsNewIdValid] = useState(true);
-  const [isFormValid, setIsFormValid] = useState(false);
-
+  const [managePreDefinedData, dispatchForPreDef] = useReducer(
+    managePreDefinedReducer,
+    initialmanagePreDefinedData
+  );
   const { nutritionData, dispatch } = useNutritionData();
 
   const filteredIngredients = nutritionData.preDefinedIngredients
@@ -25,11 +119,36 @@ function IdModal() {
       ingredient.name.toLocaleLowerCase("sv-SE").includes(searchTerm)
     );
 
+  async function loadAllPreDefIngredients() {
+    // Already loaded?
+    if (nutritionData.preDefinedIngredients.length > 0) {
+      return;
+    }
+
+    const jsonResult = await getAllNutritions();
+    dispatch({
+      type: nutritionActionTypes.loadPreDefIngredients,
+      payload: jsonResult,
+    });
+  }
+
   async function checkNewIdAvailable() {
-    await setTimeout(() => {
-      setIsNewIdValid(false);
-      setIsFormValid(false);
-    }, 2000);
+    if (
+      managePreDefinedData.formId == null ||
+      managePreDefinedData.formId.trim() === ""
+    ) {
+      return;
+    }
+    dispatchForPreDef({
+      action: managePreDefinedActionTypes.setFormIdAvailabilityInProgress,
+      payload: true,
+    });
+
+    const isAvailable = await isIdAvailable(managePreDefinedData.formId);
+    dispatchForPreDef({
+      type: managePreDefinedActionTypes.setFormIdAvailable,
+      payload: isAvailable,
+    });
   }
 
   return (
@@ -39,8 +158,9 @@ function IdModal() {
         className="btn btn-secondary btn-sm"
         data-bs-toggle="modal"
         data-bs-target="#shortIdModal"
+        onClick={loadAllPreDefIngredients}
       >
-        Id:n
+        Kortnamn
       </button>
       <div
         className="modal fade"
@@ -55,16 +175,55 @@ function IdModal() {
               <h5 className="modal-title" id="shortIdModalLabel">
                 Kortnamn
               </h5>
-              {!(isAddMode || isEditMode) && (
-                <div className="ms-2">
+              {!(
+                managePreDefinedData.isAddMode ||
+                managePreDefinedData.isEditMode
+              ) && (
+                <div className="ms-2 d-flex flex-row">
                   <button
                     type="button"
                     className="btn btn-primary btn-sm d-flex flex-row justify-content-between"
-                    onClick={() => setIsAddMode(true)}
+                    onClick={() => {
+                      dispatchForPreDef({
+                        type: managePreDefinedActionTypes.setAddMode,
+                        payload: null,
+                      });
+                    }}
                   >
-                    <i className="bi bi-plus-circle-fill pe-1" />
+                    <i className="bi bi-plus-circle-fill" />
                     <span className="me-4">Ny</span>
                   </button>
+                  {managePreDefinedData.isEditModeInit ? (
+                    // Cancel init edit mode
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm d-flex flex-row justify-content-between ms-1"
+                      onClick={() => {
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.cancelInitEditMode,
+                          payload: null,
+                        });
+                      }}
+                    >
+                      <i className="bi bi-x-circle" />
+                      <span className="me-3">Avbryt</span>
+                    </button>
+                  ) : (
+                    // Activate init edit mode
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm d-flex flex-row justify-content-between ms-1"
+                      onClick={() => {
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.initEditMode,
+                          payload: null,
+                        });
+                      }}
+                    >
+                      <i className="bi bi-pencil-square" />
+                      <span>Ändra rad</span>
+                    </button>
+                  )}
                 </div>
               )}
               <button
@@ -74,47 +233,96 @@ function IdModal() {
                 aria-label="Close"
               />
             </div>
-            {isAddMode || isEditMode ? (
-              /* Add or edit form */
+            {managePreDefinedData.isAddMode ||
+            managePreDefinedData.isEditMode ? (
+              /* Add, or edit, form */
               <div className="modal-body">
                 <strong className="d-block mb-2">
-                  {isAddMode ? "Ny" : "Ändra"} ingrediens
+                  {managePreDefinedData.isAddMode ? "Ny" : "Ändra"} ingrediens
                 </strong>
                 <form>
-                  {isAddMode && (
+                  {managePreDefinedData.isAddMode && (
                     <div className="form-floating mb-3">
+                      {/* For new id; availability is checked on blur */}
                       <input
                         type="text"
                         className="form-control"
                         id="id-field"
-                        placeholder="abc"
-                        value={newId}
-                        onChange={(e) => setNewId(e.target.value)}
+                        placeholder="short"
+                        value={managePreDefinedData.formId}
+                        onChange={(e) => {
+                          dispatchForPreDef({
+                            type: managePreDefinedActionTypes.setFormIdValue,
+                            payload: e.target.value,
+                          });
+                          dispatchForPreDef({
+                            type: managePreDefinedActionTypes.resetFormIdAvailabilityChecked,
+                            payload: null,
+                          });
+                        }}
                         onBlur={checkNewIdAvailable}
                       />
                       <label htmlFor="id-field">Kortnamn/Id</label>
-                      {!isNewIdValid && (
+                      {!managePreDefinedData.formIsIdAvailable &&
+                        managePreDefinedData.formIdAvailabilityChecked && (
+                          <div
+                            className="alert alert-danger p-1 mb-2 mt-1"
+                            role="alert"
+                            style={{ fontSize: "smaller" }}
+                          >
+                            Kortnamnet är redan upptaget
+                          </div>
+                        )}
+                      {managePreDefinedData.formIdAvailabilityCheckInProgress && (
                         <div
-                          className="alert alert-danger p-1 mb-2 mt-1"
-                          role="alert"
-                          style={{ fontSize: "smaller" }}
+                          className="spinner-border float-end"
+                          style={{ marginTop: "-2.6em", marginRight: "0.5em" }}
+                          role="status"
                         >
-                          Kortnamnet är redan upptaget
+                          <span className="visually-hidden">Loading...</span>
                         </div>
                       )}
                     </div>
                   )}
+                  <div className="form-floating mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="name-field"
+                      placeholder="Ange namn..."
+                      value={managePreDefinedData.formName}
+                      onChange={(e) =>
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.setFormName,
+                          payload: e.target.value,
+                        })
+                      }
+                    />
+                    <label htmlFor="name-field">Namn</label>
+                  </div>
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    disabled={!isFormValid}
+                    disabled={!managePreDefinedData.formIsValid}
                   >
                     Spara
+                  </button>
+                  <button
+                    type="reset"
+                    className="btn btn-secondary ms-1"
+                    onClick={() => {
+                      dispatchForPreDef({
+                        type: managePreDefinedActionTypes.cancelForm,
+                        payload: null,
+                      });
+                    }}
+                  >
+                    Avbryt
                   </button>
                 </form>
               </div>
             ) : (
-              /* List of items */
+              /* Search box */
               <div className="modal-body">
                 <div className="pb-1 border-bottom">
                   <label htmlFor="searchTerm">Sök</label>
@@ -129,8 +337,17 @@ function IdModal() {
                     }
                   />
                 </div>
+                {/* List of items */}
                 <ul className="list-group pt-1">
-                  {filteredIngredients != null &&
+                  {filteredIngredients == null ||
+                  filteredIngredients.length === 0 ? (
+                    <li
+                      className="list-group-item fst-italic"
+                      style={{ color: "gray" }}
+                    >
+                      Laddar...
+                    </li>
+                  ) : (
                     filteredIngredients
                       .sort((a, b) => (a.name > b.name ? 1 : -1))
                       .map((filteredIngredient) => (
@@ -141,8 +358,13 @@ function IdModal() {
                             (filteredIngredient.disabled ? "bg-light" : null) +
                             " bg-gradient d-flex flex-row justify-content-between"
                           }
-                          data-bs-dismiss="modal"
+                          data-bs-dismiss={
+                            managePreDefinedData.isEditModeInit ? "" : "modal"
+                          }
                           onClick={() => {
+                            if (managePreDefinedData.isEditModeInit) {
+                              return;
+                            }
                             dispatch({
                               type: nutritionActionTypes.addChosenIngredient,
                               // Don't add "filteredIngredient" as payload since it contains "disabled" prop as well.
@@ -163,6 +385,9 @@ function IdModal() {
                                 : "inherit",
                             }}
                           >
+                            {managePreDefinedData.isEditModeInit && (
+                              <i className="bi bi-pencil pe-1" />
+                            )}
                             {filteredIngredient.name}
                           </span>
                           <strong
@@ -175,7 +400,8 @@ function IdModal() {
                             {filteredIngredient.short}
                           </strong>
                         </button>
-                      ))}
+                      ))
+                  )}
                 </ul>
               </div>
             )}

@@ -8,5 +8,6 @@ body {
 
 .ingredients-container {
   max-height: 660px;
-  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 }

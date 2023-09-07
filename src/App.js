@@ -7,13 +7,11 @@ import "./App.css";
 function App() {
   return (
     <NutritionDataProvider>
-      <div>
-        <div className="ingredients-container">
-          <AddIngredient />
-          <CardList />
-        </div>
-        <Summary target={{ kcal: 550, proteins: 40, fat: 20, carbs: 55 }} />
+      <div className="ingredients-container">
+        <AddIngredient />
+        <CardList />
       </div>
+      <Summary target={{ kcal: 550, proteins: 40, fat: 20, carbs: 55 }} />
     </NutritionDataProvider>
   );
 }
