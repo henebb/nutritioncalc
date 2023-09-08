@@ -1,35 +1,16 @@
 .ingredient-card {
-  box-shadow: 0px 0px 6px rgba(100, 100, 100, 0.4);
-  border-radius: 10px;
   font-family: "Roboto Mono";
   font-size: 12px;
-  padding: 6px;
-  margin-bottom: 12px;
   color: #3c28df;
 }
 
 .ingredient-card input[type="text"],
 .ingredient-card input[type="number"] {
   color: #3c28df;
-  font-size: 1em;
+  font-size: 1.1em;
 }
 
-.ingredient-card .col-2 {
+.ingredient-card .col-form-label,
+.ingredient-card .col-4 input[type="number"] {
   font-size: 0.8em;
-}
-
-.ingredient-name {
-  font-size: 1em;
-  font-weight: bold;
-  color: #3c28df;
-}
-
-.row.total {
-  font-weight: bold;
-}
-.row.total > div:first-child {
-  text-align: right;
-}
-.row.total > div {
-  padding-right: 0;
 }

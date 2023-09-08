@@ -5,7 +5,7 @@ function CardList() {
   const { nutritionData } = useNutritionData();
 
   return (
-    <div>
+    <>
       {nutritionData != null &&
       nutritionData.chosenIngredients != null &&
       nutritionData.chosenIngredients.length > 0 ? (
@@ -22,7 +22,7 @@ function CardList() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

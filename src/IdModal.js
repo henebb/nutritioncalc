@@ -8,6 +8,7 @@ const initialmanagePreDefinedData = {
   isEditModeInit: false,
   formId: "",
   formName: "",
+  formDescription: "",
   formIsValid: false,
   formIsIdAvailable: false,
   formIdAvailabilityCheckInProgress: false,
@@ -23,6 +24,7 @@ const managePreDefinedActionTypes = {
   setFormIdAvailabilityInProgress: "SET_FORM_ID_AVAILABLITY_IN_PROGRESS",
   resetFormIdAvailabilityChecked: "RESET_FORM_ID_AVAILABLILITY_CHECKED",
   setFormName: "SET_FORM_NAME",
+  setFormDescription: "SET_FORM_DESCRIPTION",
   cancelForm: "CANCEL_FORM",
 };
 
@@ -85,6 +87,11 @@ function managePreDefinedReducer(state, action) {
           state.formIsIdAvailable,
           action.payload
         ),
+      };
+    case managePreDefinedActionTypes.setFormDescription:
+      return {
+        ...state,
+        formDescription: action.payload,
       };
     case managePreDefinedActionTypes.cancelForm:
       return initialmanagePreDefinedData;
@@ -149,6 +156,10 @@ function IdModal() {
       type: managePreDefinedActionTypes.setFormIdAvailable,
       payload: isAvailable,
     });
+  }
+
+  function handleEditFormSubmit(e) {
+    e.preventDefault();
   }
 
   return (
@@ -233,14 +244,14 @@ function IdModal() {
                 aria-label="Close"
               />
             </div>
+            {/* Add, or edit, form: */}
             {managePreDefinedData.isAddMode ||
             managePreDefinedData.isEditMode ? (
-              /* Add, or edit, form */
               <div className="modal-body">
                 <strong className="d-block mb-2">
                   {managePreDefinedData.isAddMode ? "Ny" : "Ändra"} ingrediens
                 </strong>
-                <form>
+                <form onSubmit={handleEditFormSubmit}>
                   {managePreDefinedData.isAddMode && (
                     <div className="form-floating mb-3">
                       {/* For new id; availability is checked on blur */}
@@ -299,6 +310,22 @@ function IdModal() {
                       }
                     />
                     <label htmlFor="name-field">Namn</label>
+                  </div>
+                  <div className="form-floating mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="description-field"
+                      placeholder="Ange beskrivning..."
+                      value={managePreDefinedData.formDescription}
+                      onChange={(e) =>
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.setFormDescription,
+                          payload: e.target.value,
+                        })
+                      }
+                    />
+                    <label htmlFor="description-field">Beskrivning</label>
                   </div>
                   <button
                     type="submit"
