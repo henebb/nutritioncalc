@@ -70,9 +70,9 @@ function Card({ ingredient }) {
         )}
       </div>
       <div className="d-flex flex-row justify-content-start">
-        <div className="flex-fill">
+        <div>
           <div className="row">
-            <label className="col-2 col-form-label pe-1">Vikt</label>
+            <label className="col-3 col-form-label pe-1">Vikt</label>
             <div className="col-4 pe-1">
               <input
                 type="number"
@@ -98,7 +98,7 @@ function Card({ ingredient }) {
             <div className="col-4 col-form-label ps-0">g</div>
           </div>
           <div className="row">
-            <label className="col-2 col-form-label pe-1">Energi</label>
+            <label className="col-3 col-form-label pe-1">Energi</label>
             <div className="col-4 pe-1">
               <input
                 type="number"
@@ -124,7 +124,7 @@ function Card({ ingredient }) {
             <div className="col-4 col-form-label ps-0">kcal/100g</div>
           </div>
           <div className="row">
-            <label className="col-2 col-form-label pe-1">Protein</label>
+            <label className="col-3 col-form-label pe-1">Protein</label>
             <div className="col-4 pe-1">
               <input
                 type="number"
@@ -150,7 +150,7 @@ function Card({ ingredient }) {
             <div className="col-4 col-form-label ps-0">g/100g</div>
           </div>
           <div className="row">
-            <label className="col-2 col-form-label pe-1">Fett</label>
+            <label className="col-3 col-form-label pe-1">Fett</label>
             <div className="col-4 pe-1">
               <input
                 type="number"
@@ -176,7 +176,7 @@ function Card({ ingredient }) {
             <div className="col-4 col-form-label ps-0">g/100g</div>
           </div>
           <div className="row">
-            <label className="col-2 col-form-label pe-1">Kolh.</label>
+            <label className="col-3 col-form-label pe-1">Kolhydrater</label>
             <div className="col-4 pe-1">
               <input
                 type="number"
@@ -202,7 +202,7 @@ function Card({ ingredient }) {
             <div className="col-4 col-form-label ps-0">g/100g</div>
           </div>
         </div>
-        <div className="flex-fill bg-primary rounded shadow-sm border text-white">
+        <div className="flex-grow-1 bg-primary rounded shadow-sm border text-white">
           <div
             className="d-flex flex-column justify-content-around p-2 ps-3"
             style={{ height: "100%" }}
