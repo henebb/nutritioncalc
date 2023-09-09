@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
-import "./card.css";
 import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
+import CardIngredientEdit from "./CardIngredientEdit";
+import "./card.css";
 
 function Card({ ingredient }) {
   const [name, setName] = useState(`${ingredient.name}`);
@@ -71,140 +72,86 @@ function Card({ ingredient }) {
       </div>
       <div className="row pe-2">
         <div className="col">
-          <div className="row">
-            <label className="col-4 col-form-label pe-1 text-end">Vikt:</label>
-            <div className="col-4 ps-1 pe-1">
-              <input
-                type="number"
-                className="form-control form-control-sm"
-                value={ingredient.weight}
-                onChange={(e) => {
-                  dispatch({
-                    type: nutritionActionTypes.updateChosenIngredient,
-                    payload: { ...ingredient, weight: e.target.value },
-                  });
-                }}
-                onBlur={(e) => {
-                  // Reset to 0 if empty field
-                  if (e.target.value === "") {
-                    dispatch({
-                      type: nutritionActionTypes.updateChosenIngredient,
-                      payload: { ...ingredient, weight: 0 },
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="col-4 col-form-label ps-1">g</div>
-          </div>
-          <div className="row">
-            <label className="col-4 col-form-label pe-1 text-end">
-              Energi:
-            </label>
-            <div className="col-4 ps-1 pe-1">
-              <input
-                type="number"
-                className="form-control form-control-sm"
-                value={ingredient.kcal}
-                onChange={(e) => {
-                  dispatch({
-                    type: nutritionActionTypes.updateChosenIngredient,
-                    payload: { ...ingredient, kcal: e.target.value },
-                  });
-                }}
-                onBlur={(e) => {
-                  // Reset to 0 if empty field
-                  if (e.target.value === "") {
-                    dispatch({
-                      type: nutritionActionTypes.updateChosenIngredient,
-                      payload: { ...ingredient, kcal: 0 },
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="col-4 col-form-label ps-1">kcal/100g</div>
-          </div>
-          <div className="row">
-            <label className="col-4 col-form-label pe-1 text-end">
-              Protein:
-            </label>
-            <div className="col-4 ps-1 pe-1">
-              <input
-                type="number"
-                className="form-control form-control-sm"
-                value={ingredient.proteins}
-                onChange={(e) => {
-                  dispatch({
-                    type: nutritionActionTypes.updateChosenIngredient,
-                    payload: { ...ingredient, proteins: e.target.value },
-                  });
-                }}
-                onBlur={(e) => {
-                  // Reset to 0 if empty field
-                  if (e.target.value === "") {
-                    dispatch({
-                      type: nutritionActionTypes.updateChosenIngredient,
-                      payload: { ...ingredient, proteins: 0 },
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="col-4 col-form-label pe-1 ps-1">g/100g</div>
-          </div>
-          <div className="row">
-            <label className="col-4 col-form-label pe-1 text-end">Fett:</label>
-            <div className="col-4 ps-1 pe-1">
-              <input
-                type="number"
-                className="form-control form-control-sm"
-                value={ingredient.fat}
-                onChange={(e) => {
-                  dispatch({
-                    type: nutritionActionTypes.updateChosenIngredient,
-                    payload: { ...ingredient, fat: e.target.value },
-                  });
-                }}
-                onBlur={(e) => {
-                  // Reset to 0 if empty field
-                  if (e.target.value === "") {
-                    dispatch({
-                      type: nutritionActionTypes.updateChosenIngredient,
-                      payload: { ...ingredient, fat: 0 },
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="col-4 col-form-label ps-1">g/100g</div>
-          </div>
-          <div className="row">
-            <label className="col-4 col-form-label pe-1 text-end">Kolh.:</label>
-            <div className="col-4 ps-1 pe-1">
-              <input
-                type="number"
-                className="form-control form-control-sm"
-                value={ingredient.carbs}
-                onChange={(e) => {
-                  dispatch({
-                    type: nutritionActionTypes.updateChosenIngredient,
-                    payload: { ...ingredient, carbs: e.target.value },
-                  });
-                }}
-                onBlur={(e) => {
-                  // Reset to 0 if empty field
-                  if (e.target.value === "") {
-                    dispatch({
-                      type: nutritionActionTypes.updateChosenIngredient,
-                      payload: { ...ingredient, carbs: 0 },
-                    });
-                  }
-                }}
-              />
-            </div>
-            <div className="col-4 col-form-label ps-1">g/100g</div>
-          </div>
+          <CardIngredientEdit
+            ingredientValue={ingredient.weight}
+            ingredientTitle="Vikt"
+            ingredientUnit="g"
+            handleOnChange={(e) => {
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, weight: e.target.value },
+              });
+            }}
+            handleOnBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, weight: 0 },
+                });
+              }
+            }}
+          />
+          <CardIngredientEdit
+            ingredientValue={ingredient.kcal}
+            ingredientTitle="Energi"
+            ingredientUnit="kcal/100g"
+            handleOnChange={(e) => {
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, kcal: e.target.value },
+              });
+            }}
+            handleOnBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, kcal: 0 },
+                });
+              }
+            }}
+          />
+          <CardIngredientEdit
+            ingredientValue={ingredient.fat}
+            ingredientTitle="Fett"
+            ingredientUnit="g/100g"
+            handleOnChange={(e) => {
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, fat: e.target.value },
+              });
+            }}
+            handleOnBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, fat: 0 },
+                });
+              }
+            }}
+          />
+          <CardIngredientEdit
+            ingredientValue={ingredient.carbs}
+            ingredientTitle="Kolh."
+            ingredientUnit="g/100g"
+            handleOnChange={(e) => {
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, carbs: e.target.value },
+              });
+            }}
+            handleOnBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, carbs: 0 },
+                });
+              }
+            }}
+          />
         </div>
         <div className="col bg-primary rounded shadow-sm border text-white">
           <div
