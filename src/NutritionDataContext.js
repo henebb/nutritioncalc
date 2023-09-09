@@ -26,6 +26,7 @@ const nutritionActionTypes = {
   deleteChosenIngredient: "DELETE_CHOSEN_INGREDIENT",
   updateChosenIngredient: "UPDATE_CHOSEN_INGREDIENT",
   updateChosenIngredientName: "UPDATE_CHOSEN_INGREDIENT_NAME",
+  updateChosenIngredientId: "UPDATE_CHOSEN_INGREDIENT_ID",
   loadPreDefIngredients: "LOAD_PREDEF_INGREDIENTS",
   addPreDefIngredient: "ADD_PREDEF_INGREDIENT",
   updatePreDefIngredient: "UPDATE_PREDEF_INGREDIENT",
@@ -94,6 +95,19 @@ function nutritionStoreReducer(state, action) {
       updateLocalStore(newStateAfterUpdate.chosenIngredients);
 
       return newStateAfterUpdate;
+    case nutritionActionTypes.updateChosenIngredientId:
+      const newStateAfterIdUpdate = {
+        chosenIngredients: state.chosenIngredients.map((i) =>
+          i.name === action.payload.name
+            ? { ...i, short: action.payload.short.toLocaleLowerCase("sv-SE") }
+            : i
+        ),
+        preDefinedIngredients: state.preDefinedIngredients,
+      };
+      // Also store in local storage:
+      updateLocalStore(newStateAfterIdUpdate.chosenIngredients);
+
+      return newStateAfterIdUpdate;
     case nutritionActionTypes.updateChosenIngredient:
       const ingredientToUpdate = {
         ...action.payload,
@@ -137,6 +151,14 @@ function nutritionStoreReducer(state, action) {
         preDefinedIngredients: action.payload,
       };
     case nutritionActionTypes.addPreDefIngredient:
+      // If no predef ingredients loaded, then don' add it.
+      // It will otherwise stop the load of all predef via API.
+      if (
+        state.preDefinedIngredients == null ||
+        state.preDefinedIngredients.length === 0
+      ) {
+        return state;
+      }
       return {
         chosenIngredients: state.chosenIngredients,
         preDefinedIngredients: [action.payload, ...state.preDefinedIngredients],

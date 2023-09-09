@@ -2,9 +2,12 @@ import { useCallback, useMemo, useState } from "react";
 import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
 import CardIngredientEdit from "./CardIngredientEdit";
 import "./card.css";
+import { isIdAvailable, upsertNutrition } from "./api";
 
 function Card({ ingredient }) {
   const [name, setName] = useState(`${ingredient.name}`);
+  const [newManualId, setNewManualId] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const { dispatch } = useNutritionData();
 
   const calcTotal = useCallback(
@@ -28,8 +31,59 @@ function Card({ ingredient }) {
     [ingredient.carbs, calcTotal]
   );
 
+  const isNewItem = ingredient.short == null || ingredient.short === "";
+
+  async function handleAddManualItem() {
+    if (newManualId == null || newManualId.trim() === "") {
+      return;
+    }
+
+    setIsSaving(true);
+
+    const isAvailable = await isIdAvailable(newManualId.trim());
+    if (!isAvailable) {
+      alert(`${newManualId} är tyvärr upptaget.`);
+      setIsSaving(false);
+      return;
+    }
+
+    const itemToAdd = {
+      short: newManualId,
+      name: ingredient.name,
+      description: "",
+      weight: ingredient.weight,
+      kcal: ingredient.kcal,
+      proteins: ingredient.proteins,
+      fat: ingredient.fat,
+      carbs: ingredient.carbs,
+    };
+    try {
+      await upsertNutrition(itemToAdd);
+    } catch (error) {
+      console.error(error);
+    }
+
+    // Update the id
+    dispatch({
+      type: nutritionActionTypes.updateChosenIngredientId,
+      payload: { name: itemToAdd.name, short: itemToAdd.short },
+    });
+
+    // Also add it to list of predefined ingredients.
+    dispatch({
+      type: nutritionActionTypes.addPreDefIngredient,
+      payload: itemToAdd,
+    });
+
+    setIsSaving(false);
+  }
+
   return (
-    <div className="ingredient-card shadow-sm bg-body rounded border p-2 mb-2">
+    <div
+      className={`ingredient-card shadow-sm bg-body rounded border p-2 mb-2 ${
+        isNewItem ? "border-primary" : null
+      }`}
+    >
       <div className="mb-1">
         <div className="d-flex flex-row justify-content-between">
           <input
@@ -48,21 +102,48 @@ function Card({ ingredient }) {
               });
             }}
           />
-          {/* Delete ingredient */}
-          <button
-            className="btn btn-outline-danger btn-sm"
-            type="button"
-            onClick={() => {
-              dispatch({
-                type: nutritionActionTypes.deleteChosenIngredient,
-                // Use "name" as payload, since it might be added as a manual ingredient,
-                // and then it has no "short".
-                payload: ingredient.name,
-              });
-            }}
-          >
-            <i className="bi bi-trash3"></i>
-          </button>
+          {isNewItem && (
+            <input
+              id="manual-new-id"
+              type="text"
+              value={newManualId}
+              onChange={(e) => setNewManualId(e.target.value)}
+              placeholder="Nytt kortnamn..."
+              className="border rounded p-1"
+              style={{ borderColor: "gray" }}
+            />
+          )}
+          {/* Delete, or save, ingredient */}
+          <div>
+            {isNewItem && (
+              <button
+                className="btn btn-outline-primary btn-sm me-2"
+                type="button"
+                onClick={handleAddManualItem}
+              >
+                {/* Show save icon, or loading icon */}
+                <i
+                  className={`bi ${
+                    isSaving ? "bi-arrow-clockwise" : "bi-save"
+                  }`}
+                />
+              </button>
+            )}
+            <button
+              className="btn btn-outline-danger btn-sm"
+              type="button"
+              onClick={() => {
+                dispatch({
+                  type: nutritionActionTypes.deleteChosenIngredient,
+                  // Use "name" as payload, since it might be added as a manual ingredient,
+                  // and then it has no "short".
+                  payload: ingredient.name,
+                });
+              }}
+            >
+              <i className="bi bi-trash3" />
+            </button>
+          </div>
         </div>
         {ingredient.description && (
           <div style={{ marginTop: "-10px", paddingLeft: "2px" }}>
@@ -108,6 +189,26 @@ function Card({ ingredient }) {
                 dispatch({
                   type: nutritionActionTypes.updateChosenIngredient,
                   payload: { ...ingredient, kcal: 0 },
+                });
+              }
+            }}
+          />
+          <CardIngredientEdit
+            ingredientValue={ingredient.proteins}
+            ingredientTitle="Proteiner"
+            ingredientUnit="g/100g"
+            handleOnChange={(e) => {
+              dispatch({
+                type: nutritionActionTypes.updateChosenIngredient,
+                payload: { ...ingredient, proteins: e.target.value },
+              });
+            }}
+            handleOnBlur={(e) => {
+              // Reset to 0 if empty field
+              if (e.target.value === "") {
+                dispatch({
+                  type: nutritionActionTypes.updateChosenIngredient,
+                  payload: { ...ingredient, proteins: 0 },
                 });
               }
             }}

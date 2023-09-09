@@ -62,7 +62,7 @@ function AddIngredient() {
   return (
     <>
       <form className="row add-form mb-2" onSubmit={handleSubmit}>
-        <div className="col-5">
+        <div className="col pe-1">
           <label
             className="visually-hidden visually-hidden-focusable"
             htmlFor="newIngredientName"
@@ -74,11 +74,11 @@ function AddIngredient() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="form-control"
+            className="form-control form-control-sm"
             placeholder="Ingrediens"
           />
         </div>
-        <div className="col-6">
+        <div className="col ps-1">
           <button
             type="submit"
             className="btn btn-primary btn-sm"
@@ -87,6 +87,29 @@ function AddIngredient() {
             Lägg till
           </button>
         </div>
+        <div className="col id-modal text-end">
+          {apiKeyAvailable ? (
+            <IdModal />
+          ) : (
+            <input
+              type="text"
+              className="form-control form-control-sm"
+              value={editApiKey}
+              onChange={(e) => setEditApiKey(e.target.value)}
+            />
+          )}
+        </div>
+        {!apiKeyAvailable && (
+          <div className="col">
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => setApiKey(editApiKey)}
+            >
+              OK
+            </button>
+          </div>
+        )}
       </form>
       {alreadyChosen && (
         <div className="row">
@@ -102,31 +125,6 @@ function AddIngredient() {
           </div>
         </div>
       )}
-      <div className="row mb-2 id-modal">
-        <div className="col-5">
-          {apiKeyAvailable ? (
-            <IdModal />
-          ) : (
-            <input
-              type="text"
-              className="form-control"
-              value={editApiKey}
-              onChange={(e) => setEditApiKey(e.target.value)}
-            />
-          )}
-        </div>
-        {!apiKeyAvailable && (
-          <div className="col-6">
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => setApiKey(editApiKey)}
-            >
-              OK
-            </button>
-          </div>
-        )}
-      </div>
     </>
   );
 }
