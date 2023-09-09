@@ -36,4 +36,21 @@ async function isIdAvailable(id) {
   return json.isAvailable;
 }
 
-export { getAllNutritions, isIdAvailable, updateApiKey };
+async function upsertNutrition(nutrition) {
+  if (!apiKey) {
+    return false;
+  }
+  const response = await fetch(`${apiUrl}/nutritions/upsert`, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      "x-functions-key": apiKey,
+    },
+    body: JSON.stringify(nutrition),
+  });
+
+  const json = await response.json();
+  return json;
+}
+
+export { getAllNutritions, upsertNutrition, isIdAvailable, updateApiKey };

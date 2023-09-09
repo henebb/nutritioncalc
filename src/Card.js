@@ -208,7 +208,7 @@ function Card({ ingredient }) {
         </div>
         <div className="col bg-primary rounded shadow-sm border text-white">
           <div
-            className="d-flex flex-column justify-content-around p-2 ps-3"
+            className="d-flex flex-column justify-content-around p-2"
             style={{ height: "100%" }}
           >
             <strong className="border-bottom">Totalt</strong>

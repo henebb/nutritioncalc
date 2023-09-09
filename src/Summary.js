@@ -65,7 +65,7 @@ function Summary({ target }) {
         <div className="col ">{totals.kcal} kcal</div>
         <div className="col">{totals.proteins} g</div>
         <div className="col">{totals.fat} g</div>
-        <div className="col">{totals.carbs}g</div>
+        <div className="col">{totals.carbs} g</div>
       </div>
       <div className="row target-row text-nowrap">
         <div className="col text-end">Mål:</div>

@@ -144,11 +144,23 @@ function nutritionStoreReducer(state, action) {
     case nutritionActionTypes.updatePreDefIngredient:
       const preDefToUpdate = {
         ...action.payload,
-        weight: action.payload.weight.replace(",", "."),
-        kcal: action.payload.kcal.replace(",", "."),
-        proteins: action.payload.proteins.replace(",", "."),
-        fat: action.payload.fat.replace(",", "."),
-        carbs: action.payload.carbs.replace(",", "."),
+        name: action.payload.name,
+        description: action.payload.description,
+        weight: isNaN(action.payload.weight)
+          ? action.payload.weight.replace(",", ".")
+          : action.payload.weight,
+        kcal: isNaN(action.payload.kcal)
+          ? action.payload.kcal.replace(",", ".")
+          : action.payload.kcal,
+        proteins: isNaN(action.payload.proteins)
+          ? action.payload.proteins.replace(",", ".")
+          : action.payload.proteins,
+        fat: isNaN(action.payload.fat)
+          ? action.payload.fat.replace(",", ".")
+          : action.payload.fat,
+        carbs: isNaN(action.payload.carbs)
+          ? action.payload.carbs.replace(",", ".")
+          : action.payload.carbs,
       };
       return {
         chosenIngredients: state.chosenIngredients,

@@ -1,6 +1,6 @@
 import { useReducer, useState } from "react";
 import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
-import { getAllNutritions, isIdAvailable } from "./api";
+import { getAllNutritions, upsertNutrition, isIdAvailable } from "./api";
 
 const initialmanagePreDefinedData = {
   isAddMode: false,
@@ -9,15 +9,22 @@ const initialmanagePreDefinedData = {
   formId: "",
   formName: "",
   formDescription: "",
+  formWeight: 0,
+  formKcal: 0,
+  formProteins: 0,
+  formFat: 0,
+  formCarbs: 0,
   formIsValid: false,
   formIsIdAvailable: false,
   formIdAvailabilityCheckInProgress: false,
   formIdAvailabilityChecked: false,
+  isSaving: false,
 };
 
 const managePreDefinedActionTypes = {
   setAddMode: "SET_ADD_MODE",
   initEditMode: "INIT_EDIT_MODE",
+  setEditMode: "SET_EDIT_MODE",
   cancelInitEditMode: "CANCEL_INIT_EDIT_MODE",
   setFormIdValue: "SET_FORM_ID_VALUE",
   setFormIdAvailable: "SET_FORM_ID_AVAILABLE",
@@ -25,7 +32,13 @@ const managePreDefinedActionTypes = {
   resetFormIdAvailabilityChecked: "RESET_FORM_ID_AVAILABLILITY_CHECKED",
   setFormName: "SET_FORM_NAME",
   setFormDescription: "SET_FORM_DESCRIPTION",
+  setFormWeight: "SET_FORM_WEIGHT",
+  setFormKcal: "SET_FORM_KCAL",
+  setFormProteins: "SET_FORM_PROTEINS",
+  setFormFat: "SET_FORM_FAT",
+  setFormCarbs: "SET_FORM_CARBS",
   cancelForm: "CANCEL_FORM",
+  setIsSaving: "SET_IS_SAVING",
 };
 
 function managePreDefinedReducer(state, action) {
@@ -43,6 +56,24 @@ function managePreDefinedReducer(state, action) {
         isAddMode: false,
         isEditMode: false,
         isEditModeInit: true,
+      };
+    case managePreDefinedActionTypes.setEditMode:
+      const ingredient = action.payload;
+      return {
+        ...state,
+        isAddMode: false,
+        isEditMode: true,
+        isEditModeInit: false,
+        formIsIdAvailable: true,
+        formIsValid: isFormValid(ingredient.short, true, ingredient.name),
+        formId: ingredient.short,
+        formName: ingredient.name,
+        formDescription: ingredient.description,
+        formWeight: ingredient.weight,
+        formKcal: ingredient.kcal,
+        formProteins: ingredient.proteins,
+        formFat: ingredient.fat,
+        formCarbs: ingredient.carbs,
       };
     case managePreDefinedActionTypes.cancelInitEditMode:
       return {
@@ -93,15 +124,45 @@ function managePreDefinedReducer(state, action) {
         ...state,
         formDescription: action.payload,
       };
+    case managePreDefinedActionTypes.setFormWeight:
+      return {
+        ...state,
+        formWeight: action.payload,
+      };
+    case managePreDefinedActionTypes.setFormKcal:
+      return {
+        ...state,
+        formKcal: action.payload,
+      };
+    case managePreDefinedActionTypes.setFormProteins:
+      return {
+        ...state,
+        formProteins: action.payload,
+      };
+    case managePreDefinedActionTypes.setFormFat:
+      return {
+        ...state,
+        formFat: action.payload,
+      };
+    case managePreDefinedActionTypes.setFormCarbs:
+      return {
+        ...state,
+        formCarbs: action.payload,
+      };
     case managePreDefinedActionTypes.cancelForm:
       return initialmanagePreDefinedData;
+    case managePreDefinedActionTypes.isSaving:
+      return {
+        ...state,
+        isSaving: action.payload,
+      };
     default:
       return state;
   }
 }
 
 function isFormValid(id, idAvailable, name) {
-  return id && idAvailable && name && name.trim();
+  return id && idAvailable && name != null && name.trim() !== "";
 }
 
 function IdModal() {
@@ -158,8 +219,67 @@ function IdModal() {
     });
   }
 
-  function handleEditFormSubmit(e) {
+  async function handleEditFormSubmit(e) {
     e.preventDefault();
+
+    if (!managePreDefinedData.formIsValid) {
+      // Shouldn't happen, but anyway...
+      console.log("OOOPS! Form not valid!");
+      return;
+    }
+
+    // Add or update to ingredients
+    const type = nutritionData.preDefinedIngredients.some(
+      (i) => i.short === managePreDefinedData.formId
+    )
+      ? nutritionActionTypes.updatePreDefIngredient
+      : nutritionActionTypes.addPreDefIngredient;
+
+    // Create nutrtion
+    const nutrition = {
+      short: managePreDefinedData.formId.toLocaleLowerCase("sv-SE").trim(),
+      name: managePreDefinedData.formName.toLocaleLowerCase("sv-SE").trim(),
+      description: managePreDefinedData.formDescription,
+      weight: isNaN(managePreDefinedData.formWeight)
+        ? 0
+        : Number(managePreDefinedData.formWeight),
+      kcal: isNaN(managePreDefinedData.formKcal)
+        ? 0
+        : Number(managePreDefinedData.formKcal),
+      proteins: isNaN(managePreDefinedData.formProteins)
+        ? 0
+        : Number(managePreDefinedData.formProteins),
+      fat: isNaN(managePreDefinedData.formFat)
+        ? 0
+        : Number(managePreDefinedData.formFat),
+      carbs: isNaN(managePreDefinedData.formCarbs)
+        ? 0
+        : Number(managePreDefinedData.formCarbs),
+    };
+
+    // Call api
+    dispatchForPreDef({
+      type: managePreDefinedActionTypes.setIsSaving,
+      payload: true,
+    });
+
+    try {
+      await upsertNutrition(nutrition);
+      // dispatch to update state (UI)
+      dispatch({
+        type: type,
+        payload: nutrition,
+      });
+
+      // Cancel form
+      dispatchForPreDef({
+        type: managePreDefinedActionTypes.cancelForm,
+        payload: null,
+      });
+    } catch (error) {
+      // TODO: Perhaps show something in the UI..?
+      console.error(error);
+    }
   }
 
   return (
@@ -252,8 +372,8 @@ function IdModal() {
                   {managePreDefinedData.isAddMode ? "Ny" : "Ändra"} ingrediens
                 </strong>
                 <form onSubmit={handleEditFormSubmit}>
-                  {managePreDefinedData.isAddMode && (
-                    <div className="form-floating mb-3">
+                  {managePreDefinedData.isAddMode ? (
+                    <div className="form-floating mb-2">
                       {/* For new id; availability is checked on blur */}
                       <input
                         type="text"
@@ -294,8 +414,14 @@ function IdModal() {
                         </div>
                       )}
                     </div>
+                  ) : (
+                    // Just show id
+                    <div className="ps-1 mb-2">
+                      <span className="text-black-50 pe-2">Kortnamn:</span>
+                      <span>{managePreDefinedData.formId}</span>
+                    </div>
                   )}
-                  <div className="form-floating mb-3">
+                  <div className="form-floating mb-2">
                     <input
                       type="text"
                       className="form-control"
@@ -311,7 +437,7 @@ function IdModal() {
                     />
                     <label htmlFor="name-field">Namn</label>
                   </div>
-                  <div className="form-floating mb-3">
+                  <div className="form-floating mb-2">
                     <input
                       type="text"
                       className="form-control"
@@ -327,12 +453,95 @@ function IdModal() {
                     />
                     <label htmlFor="description-field">Beskrivning</label>
                   </div>
+                  <div className="form-floating mb-2">
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="weight-field"
+                      placeholder="Ange standardvikt..."
+                      value={managePreDefinedData.formWeight}
+                      onChange={(e) =>
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.setFormWeight,
+                          payload: e.target.value,
+                        })
+                      }
+                    />
+                    <label htmlFor="description-field">Standardvikt</label>
+                  </div>
+                  <div className="form-floating mb-2">
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="kcal-field"
+                      placeholder="Ange energimängd..."
+                      value={managePreDefinedData.formKcal}
+                      onChange={(e) =>
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.setFormKcal,
+                          payload: e.target.value,
+                        })
+                      }
+                    />
+                    <label htmlFor="description-field">Kcal/100g</label>
+                  </div>
+                  <div className="form-floating mb-2">
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="proteins-field"
+                      placeholder="Ange antal proteiner..."
+                      value={managePreDefinedData.formProteins}
+                      onChange={(e) =>
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.setFormProteins,
+                          payload: e.target.value,
+                        })
+                      }
+                    />
+                    <label htmlFor="description-field">Protein/100g</label>
+                  </div>
+                  <div className="form-floating mb-2">
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="fat-field"
+                      placeholder="Ange fettmängd..."
+                      value={managePreDefinedData.formFat}
+                      onChange={(e) =>
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.setFormFat,
+                          payload: e.target.value,
+                        })
+                      }
+                    />
+                    <label htmlFor="description-field">Fett/100g</label>
+                  </div>
+                  <div className="form-floating mb-2">
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="carbs-field"
+                      placeholder="Ange antal kolhydrater..."
+                      value={managePreDefinedData.formCarbs}
+                      onChange={(e) =>
+                        dispatchForPreDef({
+                          type: managePreDefinedActionTypes.setFormCarbs,
+                          payload: e.target.value,
+                        })
+                      }
+                    />
+                    <label htmlFor="description-field">Kolh./100g</label>
+                  </div>
                   <button
                     type="submit"
                     className="btn btn-primary"
-                    disabled={!managePreDefinedData.formIsValid}
+                    disabled={
+                      !managePreDefinedData.formIsValid ||
+                      managePreDefinedData.isSaving
+                    }
                   >
-                    Spara
+                    {managePreDefinedData.isSaving ? "Sparar..." : "Spara"}
                   </button>
                   <button
                     type="reset"
@@ -389,7 +598,13 @@ function IdModal() {
                             managePreDefinedData.isEditModeInit ? "" : "modal"
                           }
                           onClick={() => {
+                            // Check what a click should do.
+                            // Either edit item, or add it as a chosen ingredient
                             if (managePreDefinedData.isEditModeInit) {
+                              dispatchForPreDef({
+                                type: managePreDefinedActionTypes.setEditMode,
+                                payload: filteredIngredient,
+                              });
                               return;
                             }
                             dispatch({
