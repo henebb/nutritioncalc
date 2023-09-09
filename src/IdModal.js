@@ -294,16 +294,13 @@ function IdModal() {
         Kortnamn
       </button>
       <div
-        className="modal fade"
+        className="modal fade text-start"
         id="shortIdModal"
         role="dialog"
         aria-labelledby="shortIdModalLabel"
         aria-hidden="true"
       >
-        <div
-          className="modal-dialog modal-dialog-centered modal-dialog-scrollable"
-          role="document"
-        >
+        <div className="modal-dialog modal-dialog-scrollable" role="document">
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="shortIdModalLabel">

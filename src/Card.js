@@ -84,73 +84,70 @@ function Card({ ingredient }) {
         isNewItem ? "border-primary" : null
       }`}
     >
-      <div className="mb-1">
-        <div className="d-flex flex-row justify-content-between">
+      <div className="row ms-1 me-0 mb-2 justify-content-around">
+        <input
+          type="text"
+          value={name}
+          className="col ps-0 border-0"
+          onChange={(e) => setName(e.target.value.toLocaleLowerCase("sv-SE"))}
+          onBlur={(e) => {
+            if (name === ingredient.name) {
+              // Unchanged
+              return;
+            }
+            dispatch({
+              type: nutritionActionTypes.updateChosenIngredientName,
+              payload: { oldName: ingredient.name, newName: name },
+            });
+          }}
+        />
+        {isNewItem && (
           <input
+            id="manual-new-id"
             type="text"
-            value={name}
-            className="ingredient-name border-0"
-            onChange={(e) => setName(e.target.value.toLocaleLowerCase("sv-SE"))}
-            onBlur={(e) => {
-              if (name === ingredient.name) {
-                // Unchanged
-                return;
-              }
+            value={newManualId}
+            onChange={(e) => setNewManualId(e.target.value)}
+            placeholder="Nytt kortnamn..."
+            className="col border rounded p-1"
+            style={{ borderColor: "gray", fontSize: "0.8em" }}
+          />
+        )}
+        {/* Delete, or save, ingredient */}
+        <div className="col text-end text-nowrap pe-0">
+          {isNewItem && (
+            <button
+              className="btn btn-outline-primary btn-sm me-2"
+              type="button"
+              onClick={handleAddManualItem}
+            >
+              {/* Show save icon, or loading icon */}
+              <i
+                className={`bi ${isSaving ? "bi-arrow-clockwise" : "bi-save"}`}
+              />
+            </button>
+          )}
+          <button
+            className="btn btn-outline-danger btn-sm"
+            type="button"
+            onClick={() => {
               dispatch({
-                type: nutritionActionTypes.updateChosenIngredientName,
-                payload: { oldName: ingredient.name, newName: name },
+                type: nutritionActionTypes.deleteChosenIngredient,
+                // Use "name" as payload, since it might be added as a manual ingredient,
+                // and then it has no "short".
+                payload: ingredient.name,
               });
             }}
-          />
-          {isNewItem && (
-            <input
-              id="manual-new-id"
-              type="text"
-              value={newManualId}
-              onChange={(e) => setNewManualId(e.target.value)}
-              placeholder="Nytt kortnamn..."
-              className="border rounded p-1"
-              style={{ borderColor: "gray" }}
-            />
-          )}
-          {/* Delete, or save, ingredient */}
-          <div>
-            {isNewItem && (
-              <button
-                className="btn btn-outline-primary btn-sm me-2"
-                type="button"
-                onClick={handleAddManualItem}
-              >
-                {/* Show save icon, or loading icon */}
-                <i
-                  className={`bi ${
-                    isSaving ? "bi-arrow-clockwise" : "bi-save"
-                  }`}
-                />
-              </button>
-            )}
-            <button
-              className="btn btn-outline-danger btn-sm"
-              type="button"
-              onClick={() => {
-                dispatch({
-                  type: nutritionActionTypes.deleteChosenIngredient,
-                  // Use "name" as payload, since it might be added as a manual ingredient,
-                  // and then it has no "short".
-                  payload: ingredient.name,
-                });
-              }}
-            >
-              <i className="bi bi-trash3" />
-            </button>
-          </div>
+          >
+            <i className="bi bi-trash3" />
+          </button>
         </div>
-        {ingredient.description && (
-          <div style={{ marginTop: "-10px", paddingLeft: "2px" }}>
-            <i style={{ fontSize: "smaller" }}>{ingredient.description}</i>
-          </div>
-        )}
       </div>
+      {ingredient.description && (
+        <div style={{ marginTop: "-14px", marginLeft: "4px" }} className="mb-1">
+          <i style={{ fontSize: "smaller" }}>{ingredient.description}</i>
+        </div>
+      )}
+
       <div className="row pe-2">
         <div className="col">
           <CardIngredientEdit

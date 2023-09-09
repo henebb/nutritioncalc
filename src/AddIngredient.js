@@ -1,6 +1,5 @@
 import { useState } from "react";
 import IdModal from "./IdModal";
-import "./add-ingredient.css";
 import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
 
 function AddIngredient() {
