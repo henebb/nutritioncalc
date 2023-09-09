@@ -69,11 +69,11 @@ function Card({ ingredient }) {
           </div>
         )}
       </div>
-      <div className="d-flex flex-row justify-content-start">
-        <div>
+      <div className="row pe-2">
+        <div className="col">
           <div className="row">
-            <label className="col-3 col-form-label pe-1">Vikt</label>
-            <div className="col-4 pe-1">
+            <label className="col-4 col-form-label pe-1 text-end">Vikt:</label>
+            <div className="col-4 ps-1 pe-1">
               <input
                 type="number"
                 className="form-control form-control-sm"
@@ -95,11 +95,13 @@ function Card({ ingredient }) {
                 }}
               />
             </div>
-            <div className="col-4 col-form-label ps-0">g</div>
+            <div className="col-4 col-form-label ps-1">g</div>
           </div>
           <div className="row">
-            <label className="col-3 col-form-label pe-1">Energi</label>
-            <div className="col-4 pe-1">
+            <label className="col-4 col-form-label pe-1 text-end">
+              Energi:
+            </label>
+            <div className="col-4 ps-1 pe-1">
               <input
                 type="number"
                 className="form-control form-control-sm"
@@ -121,11 +123,13 @@ function Card({ ingredient }) {
                 }}
               />
             </div>
-            <div className="col-4 col-form-label ps-0">kcal/100g</div>
+            <div className="col-4 col-form-label ps-1">kcal/100g</div>
           </div>
           <div className="row">
-            <label className="col-3 col-form-label pe-1">Protein</label>
-            <div className="col-4 pe-1">
+            <label className="col-4 col-form-label pe-1 text-end">
+              Protein:
+            </label>
+            <div className="col-4 ps-1 pe-1">
               <input
                 type="number"
                 className="form-control form-control-sm"
@@ -147,11 +151,11 @@ function Card({ ingredient }) {
                 }}
               />
             </div>
-            <div className="col-4 col-form-label ps-0">g/100g</div>
+            <div className="col-4 col-form-label pe-1 ps-1">g/100g</div>
           </div>
           <div className="row">
-            <label className="col-3 col-form-label pe-1">Fett</label>
-            <div className="col-4 pe-1">
+            <label className="col-4 col-form-label pe-1 text-end">Fett:</label>
+            <div className="col-4 ps-1 pe-1">
               <input
                 type="number"
                 className="form-control form-control-sm"
@@ -173,11 +177,11 @@ function Card({ ingredient }) {
                 }}
               />
             </div>
-            <div className="col-4 col-form-label ps-0">g/100g</div>
+            <div className="col-4 col-form-label ps-1">g/100g</div>
           </div>
           <div className="row">
-            <label className="col-3 col-form-label pe-1">Kolhydrater</label>
-            <div className="col-4 pe-1">
+            <label className="col-4 col-form-label pe-1 text-end">Kolh.:</label>
+            <div className="col-4 ps-1 pe-1">
               <input
                 type="number"
                 className="form-control form-control-sm"
@@ -199,19 +203,19 @@ function Card({ ingredient }) {
                 }}
               />
             </div>
-            <div className="col-4 col-form-label ps-0">g/100g</div>
+            <div className="col-4 col-form-label ps-1">g/100g</div>
           </div>
         </div>
-        <div className="flex-grow-1 bg-primary rounded shadow-sm border text-white">
+        <div className="col bg-primary rounded shadow-sm border text-white">
           <div
             className="d-flex flex-column justify-content-around p-2 ps-3"
             style={{ height: "100%" }}
           >
             <strong className="border-bottom">Totalt</strong>
             <span className="text-nowrap">{totalKcal} kcal</span>
-            <span className="text-nowrap">{totalProteins}g protein</span>
-            <span className="text-nowrap">{totalFat}g fett</span>
-            <span className="text-nowrap">{totalCarbs}g kolhydrater</span>
+            <span className="text-nowrap">{totalProteins} g protein</span>
+            <span className="text-nowrap">{totalFat} g fett</span>
+            <span className="text-nowrap">{totalCarbs} g kolhydrater</span>
           </div>
         </div>
       </div>

@@ -6,8 +6,8 @@ body {
   padding: 6px;
 }
 
-.ingredients-container {
-  max-height: 660px;
-  overflow-y: auto;
-  overflow-x: hidden;
+.card-list-container {
+  /* Related to height of bottom summary. 
+  This to enable extra scroll, otherwise content will be hidden underneath summary footer */
+  margin-bottom: 80px;
 }

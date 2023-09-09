@@ -52,27 +52,27 @@ function Summary({ target }) {
   }, [nutritionData]);
 
   return (
-    <div className="fixed-bottom summary">
-      <div className="row header-row">
-        <div className="col-2"></div>
-        <div className="col-2">Energi</div>
-        <div className="col-2">Proteiner</div>
-        <div className="col-2">Fett</div>
-        <div className="col-2">Kolh.</div>
+    <div className="fixed-bottom bg-body summary p-2">
+      <div className="row header-row fw-bold">
+        <div className="col"></div>
+        <div className="col">Energi</div>
+        <div className="col">Proteiner</div>
+        <div className="col">Fett</div>
+        <div className="col">Kolh.</div>
       </div>
-      <div className="row total-row">
-        <div className="col-2">Total:</div>
-        <div className="col-2">{totals.kcal} kcal</div>
-        <div className="col-2">{totals.proteins} g</div>
-        <div className="col-2">{totals.fat} g</div>
-        <div className="col-2">{totals.carbs} g</div>
+      <div className="row total-row fw-bold text-nowrap">
+        <div className="col text-end">Total:</div>
+        <div className="col ">{totals.kcal} kcal</div>
+        <div className="col">{totals.proteins} g</div>
+        <div className="col">{totals.fat} g</div>
+        <div className="col">{totals.carbs}g</div>
       </div>
-      <div className="row target-row">
-        <div className="col-2">Mål:</div>
-        <div className="col-2">{target.kcal} kcal</div>
-        <div className="col-2">{target.proteins} g</div>
-        <div className="col-2">{target.fat} g</div>
-        <div className="col-2">{target.carbs} g</div>
+      <div className="row target-row text-nowrap">
+        <div className="col text-end">Mål:</div>
+        <div className="col">{target.kcal} kcal</div>
+        <div className="col">{target.proteins} g</div>
+        <div className="col">{target.fat} g</div>
+        <div className="col">{target.carbs} g</div>
       </div>
     </div>
   );
