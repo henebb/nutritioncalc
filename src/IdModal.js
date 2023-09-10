@@ -207,8 +207,9 @@ function IdModal() {
     ) {
       return;
     }
+
     dispatchForPreDef({
-      action: managePreDefinedActionTypes.setFormIdAvailabilityInProgress,
+      type: managePreDefinedActionTypes.setFormIdAvailabilityInProgress,
       payload: true,
     });
 
@@ -321,8 +322,8 @@ function IdModal() {
                       });
                     }}
                   >
-                    <i className="bi bi-plus-circle-fill" />
-                    <span className="me-4">Ny</span>
+                    <i className="bi bi-plus-circle-fill me-1" />
+                    <span>Ny</span>
                   </button>
                   {managePreDefinedData.isEditModeInit ? (
                     // Cancel init edit mode
@@ -336,8 +337,8 @@ function IdModal() {
                         });
                       }}
                     >
-                      <i className="bi bi-x-circle" />
-                      <span className="me-3">Avbryt</span>
+                      <i className="bi bi-x-circle me-1" />
+                      <span>Avbryt</span>
                     </button>
                   ) : (
                     // Activate init edit mode

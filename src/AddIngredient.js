@@ -60,33 +60,37 @@ function AddIngredient() {
 
   return (
     <>
-      <form className="row add-form mb-2" onSubmit={handleSubmit}>
-        <div className="col pe-1">
-          <label
-            className="visually-hidden visually-hidden-focusable"
-            htmlFor="newIngredientName"
-          >
-            Ingrediens
-          </label>
-          <input
-            id="newIngredientName"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="form-control form-control-sm"
-            placeholder="Ingrediens"
-          />
-        </div>
-        <div className="col ps-1">
-          <button
-            type="submit"
-            className="btn btn-primary btn-sm"
-            disabled={!name}
-          >
-            Lägg till
-          </button>
-        </div>
-        <div className="col id-modal text-end">
+      <div className="row">
+        <form className="col-8 add-form mb-2" onSubmit={handleSubmit}>
+          <div className="row">
+            <div className="col pe-1">
+              <label
+                className="visually-hidden visually-hidden-focusable"
+                htmlFor="newIngredientName"
+              >
+                Ingrediens
+              </label>
+              <input
+                id="newIngredientName"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="form-control form-control-sm"
+                placeholder="Ingrediens"
+              />
+            </div>
+            <div className="col ps-1">
+              <button
+                type="submit"
+                className="btn btn-primary btn-sm"
+                disabled={!name}
+              >
+                Lägg till
+              </button>
+            </div>
+          </div>
+        </form>
+        <div className="col-4 id-modal text-end">
           {apiKeyAvailable ? (
             <IdModal />
           ) : (
@@ -109,7 +113,7 @@ function AddIngredient() {
             </button>
           </div>
         )}
-      </form>
+      </div>
       {alreadyChosen && (
         <div className="row">
           <div className="col-5">
