@@ -1,15 +1,17 @@
 import { NutritionDataProvider } from "./NutritionDataContext";
+import AddIngredient from "./AddIngredient";
+import MealSelector from "./MealSelector";
 import CardList from "./CardList";
 import Summary from "./Summary";
-import AddIngredient from "./AddIngredient";
 import "./App.css";
 
 function App() {
   return (
     <NutritionDataProvider>
       <AddIngredient />
+      <MealSelector />
       <CardList />
-      <Summary target={{ kcal: 550, proteins: 40, fat: 20, carbs: 55 }} />
+      <Summary />
     </NutritionDataProvider>
   );
 }

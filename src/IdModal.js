@@ -171,7 +171,7 @@ function IdModal() {
     managePreDefinedReducer,
     initialmanagePreDefinedData
   );
-  const { nutritionData, dispatch } = useNutritionData();
+  const { nutritionData, dispatch, selectedMeal } = useNutritionData();
 
   const filteredIngredients = nutritionData.preDefinedIngredients
     .map((ingredient) => {
@@ -187,11 +187,13 @@ function IdModal() {
       ingredient.name.toLocaleLowerCase("sv-SE").includes(searchTerm)
     );
 
-  async function loadAllPreDefIngredients() {
-    // Already loaded?
-    if (nutritionData.preDefinedIngredients.length > 0) {
+  async function loadAllPreDefIngredients(forceLoad) {
+    // Already loaded (if not force)?
+    if (nutritionData.preDefinedIngredients.length > 0 && forceLoad === false) {
       return;
     }
+
+    console.log("Load predefined ingredients from API!");
 
     const jsonResult = await getAllNutritions();
     dispatch({
@@ -290,7 +292,7 @@ function IdModal() {
         className="btn btn-secondary btn-sm"
         data-bs-toggle="modal"
         data-bs-target="#shortIdModal"
-        onClick={loadAllPreDefIngredients}
+        onClick={() => loadAllPreDefIngredients(false)}
       >
         Kortnamn
       </button>
@@ -312,9 +314,17 @@ function IdModal() {
                 managePreDefinedData.isEditMode
               ) && (
                 <div className="ms-2 d-flex flex-row">
+                  {/* Force reload */}
                   <button
                     type="button"
-                    className="btn btn-primary btn-sm d-flex flex-row justify-content-between"
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={() => loadAllPreDefIngredients(true)}
+                  >
+                    <i className="bi bi-arrow-clockwise" />
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm d-flex flex-row justify-content-between ms-1"
                     onClick={() => {
                       dispatchForPreDef({
                         type: managePreDefinedActionTypes.setAddMode,
@@ -352,7 +362,7 @@ function IdModal() {
                         });
                       }}
                     >
-                      <i className="bi bi-pencil-square" />
+                      <i className="bi bi-pencil-square me-1" />
                       <span>Ändra rad</span>
                     </button>
                   )}
@@ -608,12 +618,18 @@ function IdModal() {
                               });
                               return;
                             }
+                            // Don't add "filteredIngredient" as payload since it contains "disabled" prop as well.
+                            // Thus, fetch the item from the preDefined list
+                            const ingredientToAdd =
+                              nutritionData.preDefinedIngredients.find(
+                                (pre) => pre.short === filteredIngredient.short
+                              );
                             dispatch({
                               type: nutritionActionTypes.addChosenIngredient,
-                              // Don't add "filteredIngredient" as payload since it contains "disabled" prop as well.
-                              payload: nutritionData.preDefinedIngredients.find(
-                                (pre) => pre.short === filteredIngredient.short
-                              ),
+                              payload: {
+                                ...ingredientToAdd,
+                                meal: selectedMeal,
+                              },
                             });
                             // Clear field
                             setSearchTerm("");

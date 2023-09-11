@@ -1,0 +1,10 @@
+.meal-selector {
+  margin-bottom: 0.5rem;
+  border-top: 1px solid lightgray;
+  padding-top: 0.5rem;
+  font-size: 12px;
+}
+
+.meal-selector .btn {
+  font-size: 1em;
+}

@@ -7,7 +7,8 @@ function AddIngredient() {
   const [editApiKey, setEditApiKey] = useState("");
   const [alreadyChosen, setAlreadyChosen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const { nutritionData, dispatch, apiKey, setApiKey } = useNutritionData();
+  const { nutritionData, dispatch, apiKey, setApiKey, selectedMeal } =
+    useNutritionData();
 
   const apiKeyAvailable = apiKey != null && apiKey !== "";
 
@@ -16,7 +17,7 @@ function AddIngredient() {
 
     const nameLowerCasedTrimmed = name.toLocaleLowerCase("sv-SE").trim();
 
-    // Check if the name exists in the list of predefined,
+    // Check if the name or short exists in the list of predefined,
     // if so, fetch it from that list and use it as the added item.
     const existingPreDef = nutritionData.preDefinedIngredients.find(
       (i) =>
@@ -25,7 +26,7 @@ function AddIngredient() {
 
     let newItem = {};
     if (existingPreDef) {
-      newItem = existingPreDef;
+      newItem = { ...existingPreDef, meal: selectedMeal };
     } else {
       newItem = {
         name: name,
@@ -34,6 +35,7 @@ function AddIngredient() {
         proteins: 0,
         fat: 0,
         carbs: 0,
+        meal: selectedMeal,
       };
     }
 

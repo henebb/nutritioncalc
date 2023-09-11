@@ -2,10 +2,11 @@ import { useMemo } from "react";
 import { useNutritionData } from "./NutritionDataContext";
 import "./summary.css";
 
-function Summary({ target }) {
-  const { nutritionData } = useNutritionData();
+function Summary() {
+  const { nutritionData, mealTargets, selectedMeal } = useNutritionData();
 
-  const totals = useMemo(() => {
+  // Calculate day total:
+  const dayTotals = useMemo(() => {
     if (nutritionData == null || nutritionData.chosenIngredients == null) {
       return {
         kcal: 0,
@@ -51,29 +52,127 @@ function Summary({ target }) {
     };
   }, [nutritionData]);
 
+  // Calculate day target:
+  const dayTargets = useMemo(() => {
+    if (mealTargets == null) {
+      return {
+        kcal: 0,
+        proteins: 0,
+        fat: 0,
+        carbs: 0,
+      };
+    }
+    return {
+      kcal: mealTargets.reduce((acc, value) => acc + value.kcal, 0),
+      proteins: mealTargets.reduce((acc, value) => acc + value.proteins, 0),
+      fat: mealTargets.reduce((acc, value) => acc + value.fat, 0),
+      carbs: mealTargets.reduce((acc, value) => acc + value.carbs, 0),
+    };
+  }, [mealTargets]);
+
+  // Calculate meal totals:
+  // Fake:
+  const mealTotals = useMemo(() => {
+    if (nutritionData == null || nutritionData.chosenIngredients == null) {
+      return {
+        kcal: 0,
+        proteins: 0,
+        fat: 0,
+        carbs: 0,
+      };
+    }
+
+    // Only use ingredients with specific meal type and only that have valid numbers
+    const validMealIngredients = nutritionData.chosenIngredients.filter(
+      (i) =>
+        i.meal === selectedMeal &&
+        !isNaN(i.weight) &&
+        !isNaN(i.kcal) &&
+        !isNaN(i.proteins) &&
+        !isNaN(i.fat) &&
+        !isNaN(i.carbs)
+    );
+
+    const totalKcal = validMealIngredients.reduce(
+      (acc, value) => acc + Number(value.weight) * 0.01 * Number(value.kcal),
+      0
+    );
+    const totalProteins = validMealIngredients.reduce(
+      (acc, value) =>
+        acc + Number(value.weight) * 0.01 * Number(value.proteins),
+      0
+    );
+    const totalFat = validMealIngredients.reduce(
+      (acc, value) => acc + Number(value.weight) * 0.01 * Number(value.fat),
+      0
+    );
+    const totalCarbs = validMealIngredients.reduce(
+      (acc, value) => acc + Number(value.weight) * 0.01 * Number(value.carbs),
+      0
+    );
+
+    return {
+      kcal: totalKcal.toFixed(),
+      proteins: totalProteins.toFixed(),
+      fat: totalFat.toFixed(),
+      carbs: totalCarbs.toFixed(),
+    };
+  }, [nutritionData, selectedMeal]);
+
+  // Calculate meal target:
+  const mealTarget =
+    mealTargets != null
+      ? mealTargets.find((t) => t.meal === selectedMeal)
+      : {
+          kcal: 0,
+          proteins: 0,
+          fat: 0,
+          carbs: 0,
+        };
+
   return (
-    <div className="fixed-bottom bg-body summary p-2">
-      <div className="row header-row fw-bold">
-        <div className="col"></div>
-        <div className="col">Energi</div>
-        <div className="col">Proteiner</div>
-        <div className="col">Fett</div>
-        <div className="col">Kolh.</div>
-      </div>
-      <div className="row total-row fw-bold text-nowrap">
-        <div className="col text-end">Total:</div>
-        <div className="col ">{totals.kcal} kcal</div>
-        <div className="col">{totals.proteins} g</div>
-        <div className="col">{totals.fat} g</div>
-        <div className="col">{totals.carbs} g</div>
-      </div>
-      <div className="row target-row text-nowrap">
-        <div className="col text-end">Mål:</div>
-        <div className="col">{target.kcal} kcal</div>
-        <div className="col">{target.proteins} g</div>
-        <div className="col">{target.fat} g</div>
-        <div className="col">{target.carbs} g</div>
-      </div>
+    <div className="fixed-bottom bg-body summary pe-3 pt-2">
+      <table className="table table-sm">
+        <thead>
+          <tr className="header-row">
+            <th></th>
+            <th>Energi</th>
+            <th>Proteiner</th>
+            <th>Fett</th>
+            <th>Kolh.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="fw-bold">
+            <td className="text-end">Total:</td>
+            <td>{dayTotals.kcal} kcal</td>
+            <td>{dayTotals.proteins} g</td>
+            <td>{dayTotals.fat} g</td>
+            <td>{dayTotals.carbs} g</td>
+          </tr>
+          <tr>
+            <td className="text-end">Dagmål:</td>
+            <td>{dayTargets.kcal} kcal</td>
+            <td>{dayTargets.proteins} g</td>
+            <td>{dayTargets.fat} g</td>
+            <td>{dayTargets.carbs} g</td>
+          </tr>
+          <tr>
+            <td className="text-end">Måltid:</td>
+            <td>{mealTotals.kcal} kcal</td>
+            <td>{mealTotals.proteins} g</td>
+            <td>{mealTotals.fat} g</td>
+            <td>{mealTotals.carbs} g</td>
+          </tr>
+          <tr>
+            <td className="text-end">Målt.mål:</td>
+            <td>{mealTarget.kcal} kcal</td>
+            <td>{mealTarget.proteins} g</td>
+            <td>{mealTarget.fat} g</td>
+            <td>{mealTarget.carbs} g</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
