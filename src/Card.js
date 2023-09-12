@@ -8,7 +8,7 @@ function Card({ ingredient }) {
   const [name, setName] = useState(`${ingredient.name}`);
   const [newManualId, setNewManualId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const { dispatch } = useNutritionData();
+  const { dispatch, selectedMeal } = useNutritionData();
 
   const calcTotal = useCallback(
     (value) => (value * 0.01 * ingredient.weight).toFixed(),
@@ -66,7 +66,10 @@ function Card({ ingredient }) {
     // Update the id
     dispatch({
       type: nutritionActionTypes.updateChosenIngredientId,
-      payload: { name: itemToAdd.name, short: itemToAdd.short },
+      payload: {
+        name: itemToAdd.name,
+        short: itemToAdd.short,
+      },
     });
 
     // Also add it to list of predefined ingredients.
@@ -97,7 +100,11 @@ function Card({ ingredient }) {
             }
             dispatch({
               type: nutritionActionTypes.updateChosenIngredientName,
-              payload: { oldName: ingredient.name, newName: name },
+              payload: {
+                oldName: ingredient.name,
+                newName: name,
+                selectedMeal: selectedMeal,
+              },
             });
           }}
         />
@@ -134,7 +141,7 @@ function Card({ ingredient }) {
                 type: nutritionActionTypes.deleteChosenIngredient,
                 // Use "name" as payload, since it might be added as a manual ingredient,
                 // and then it has no "short".
-                payload: ingredient.name,
+                payload: { name: ingredient.name, selectedMeal: selectedMeal },
               });
             }}
           >

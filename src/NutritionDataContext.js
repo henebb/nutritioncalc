@@ -34,8 +34,13 @@ function nutritionStoreReducer(state, action) {
   switch (action.type) {
     case nutritionActionTypes.addChosenIngredient:
       // You can add a manual ingredient (without "short"), so check duplicate on name)
+      // If already added (for meal) just return state.
       const nameLowerCased = action.payload.name.toLocaleLowerCase("sv-SE");
-      if (state.chosenIngredients.some((i) => i.name === nameLowerCased)) {
+      if (
+        state.chosenIngredients.some(
+          (i) => i.name === nameLowerCased && i.meal === action.payload.meal
+        )
+      ) {
         return state;
       }
       const updatedIngredient = { ...action.payload, name: nameLowerCased };
@@ -53,7 +58,11 @@ function nutritionStoreReducer(state, action) {
         // Use "name" here, since it might be added as a manual ingredient,
         // and then it has no "short"
         chosenIngredients: state.chosenIngredients.filter(
-          (i) => i.name !== action.payload
+          (i) =>
+            !(
+              i.name === action.payload.name &&
+              i.meal === action.payload.selectedMeal
+            )
         ),
         preDefinedIngredients: state.preDefinedIngredients,
       };
@@ -61,7 +70,11 @@ function nutritionStoreReducer(state, action) {
       // Check if already exists
       let newName = action.payload.newName;
       if (
-        state.chosenIngredients.some((i) => i.name === action.payload.newName)
+        state.chosenIngredients.some(
+          (i) =>
+            i.name === action.payload.newName &&
+            i.meal === action.payload.selectedMeal
+        )
       ) {
         newName = `${newName}_ny`;
       }
@@ -113,7 +126,10 @@ function nutritionStoreReducer(state, action) {
         // Use "name" here, since it might be added as a manual ingredient,
         // and then it has no "short"
         chosenIngredients: state.chosenIngredients.map((i) =>
-          i.name === ingredientToUpdate.name ? ingredientToUpdate : i
+          i.name === ingredientToUpdate.name &&
+          i.meal === ingredientToUpdate.meal
+            ? ingredientToUpdate
+            : i
         ),
         preDefinedIngredients: state.preDefinedIngredients,
       };
@@ -218,6 +234,10 @@ function NutritionDataProvider({ children }) {
     localStorage.getItem("selectedMeal") ?? mealTargets[0].meal
   );
 
+  const selectedMealDescription = mealTargets.find(
+    (m) => m.meal === selectedMeal
+  ).description;
+
   const [nutritionData, dispatch] = useReducer(
     nutritionStoreReducer,
     initialNutritionData
@@ -236,10 +256,9 @@ function NutritionDataProvider({ children }) {
   );
 
   // Always store selected meal in local storage on change
-  useEffect(
-    () => localStorage.setItem("selectedMeal", selectedMeal),
-    [selectedMeal]
-  );
+  useEffect(() => {
+    localStorage.setItem("selectedMeal", selectedMeal);
+  }, [selectedMeal]);
 
   return (
     <NutritionDataContext.Provider
@@ -251,6 +270,7 @@ function NutritionDataProvider({ children }) {
         mealTargets: mealTargets,
         selectedMeal: selectedMeal,
         setSelectedMeal: setSelectedMeal,
+        selectedMealDescription: selectedMealDescription,
       }}
     >
       {children}

@@ -171,16 +171,19 @@ function IdModal() {
     managePreDefinedReducer,
     initialmanagePreDefinedData
   );
-  const { nutritionData, dispatch, selectedMeal } = useNutritionData();
+  const { nutritionData, dispatch, selectedMeal, selectedMealDescription } =
+    useNutritionData();
 
   const filteredIngredients = nutritionData.preDefinedIngredients
     .map((ingredient) => {
       return {
         ...ingredient,
-        // Set "disabled" if already a chosen ingredient
-        disabled: nutritionData.chosenIngredients.some(
-          (i) => i.name === ingredient.name
-        ),
+        // Set "disabled" if already a chosen ingredient (when not in edit init mode)
+        disabled: managePreDefinedData.isEditModeInit
+          ? false // Always _not_ disabled
+          : nutritionData.chosenIngredients.some(
+              (i) => i.name === ingredient.name && i.meal === selectedMeal
+            ),
       };
     })
     .filter((ingredient) =>
@@ -307,7 +310,7 @@ function IdModal() {
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title" id="shortIdModalLabel">
-                Kortnamn
+                {selectedMealDescription}
               </h5>
               {!(
                 managePreDefinedData.isAddMode ||
