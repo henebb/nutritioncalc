@@ -3,7 +3,8 @@ import { useNutritionData } from "./NutritionDataContext";
 import "./summary.css";
 
 function Summary() {
-  const { nutritionData, mealTargets, selectedMeal } = useNutritionData();
+  const { nutritionData, mealTargets, selectedMeal, selectedMealDescription } =
+    useNutritionData();
 
   // Calculate day total:
   const dayTotals = useMemo(() => {
@@ -158,14 +159,16 @@ function Summary() {
             <td>{dayTargets.carbs} g</td>
           </tr>
           <tr>
-            <td className="text-end">Måltid:</td>
+            <td className="text-end">{selectedMealDescription}:</td>
             <td>{mealTotals.kcal} kcal</td>
             <td>{mealTotals.proteins} g</td>
             <td>{mealTotals.fat} g</td>
             <td>{mealTotals.carbs} g</td>
           </tr>
           <tr>
-            <td className="text-end">Målt.mål:</td>
+            <td className="text-end">
+              {selectedMealDescription.substring(0, 2)}.mål:
+            </td>
             <td>{mealTarget.kcal} kcal</td>
             <td>{mealTarget.proteins} g</td>
             <td>{mealTarget.fat} g</td>

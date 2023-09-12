@@ -234,6 +234,7 @@ function NutritionDataProvider({ children }) {
     localStorage.getItem("selectedMeal") ?? mealTargets[0].meal
   );
 
+  // Set description for selected meal
   const selectedMealDescription = mealTargets.find(
     (m) => m.meal === selectedMeal
   ).description;
