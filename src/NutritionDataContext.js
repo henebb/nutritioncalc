@@ -214,7 +214,9 @@ const NutritionDataContext = createContext();
 
 function NutritionDataProvider({ children }) {
   const [apiKey, setApiKey] = useState(localStorage.getItem(apiKeyName));
-  const [selectedMeal, setSelectedMeal] = useState(mealTargets[0].meal);
+  const [selectedMeal, setSelectedMeal] = useState(
+    localStorage.getItem("selectedMeal") ?? mealTargets[0].meal
+  );
 
   const [nutritionData, dispatch] = useReducer(
     nutritionStoreReducer,
@@ -231,6 +233,12 @@ function NutritionDataProvider({ children }) {
     () =>
       localStorage.setItem(stateStorageKeyName, JSON.stringify(nutritionData)),
     [nutritionData]
+  );
+
+  // Always store selected meal in local storage on change
+  useEffect(
+    () => localStorage.setItem("selectedMeal", selectedMeal),
+    [selectedMeal]
   );
 
   return (
