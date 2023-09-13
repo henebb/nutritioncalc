@@ -17,7 +17,7 @@ function AddIngredient() {
 
     const nameLowerCasedTrimmed = name.toLocaleLowerCase("sv-SE").trim();
 
-    // Check if the name or short exists in the list of predefined,
+    // Check if the name, or short, exists in the list of predefined,
     // if so, fetch it from that list and use it as the added item.
     const existingPreDef = nutritionData.preDefinedIngredients.find(
       (i) =>
@@ -40,7 +40,11 @@ function AddIngredient() {
     }
 
     // Check if already a chosen ingredient
-    if (nutritionData.chosenIngredients.some((i) => i.name === newItem.name)) {
+    if (
+      nutritionData.chosenIngredients.some(
+        (i) => i.name === newItem.name && i.meal === selectedMeal
+      )
+    ) {
       // Show, and auto-hide, warning.
       // Use timers to allow animation to complete
       setAlreadyChosen(true);
