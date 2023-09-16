@@ -2,7 +2,7 @@
   box-shadow: 0px 0px 16px 6px rgba(0, 0, 0, 0.25);
   font-family: "Roboto Mono";
   font-size: 12px;
-  height: 9em; /* Also see app.css */
+  height: 10em; /* Also see app.css */
 }
 
 .summary .header-row {

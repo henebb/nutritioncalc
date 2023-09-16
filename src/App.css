@@ -9,5 +9,5 @@ body {
 .card-list-container {
   /* Related to height of bottom summary. 
   This to enable extra scroll, otherwise content will be hidden underneath summary footer */
-  margin-bottom: 9.5em;
+  margin-bottom: 10.5em;
 }
