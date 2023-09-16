@@ -14,3 +14,7 @@
   padding: 0 2px;
   text-align: end;
 }
+
+i[aria-hidden="true"] > span {
+  display: none;
+}
