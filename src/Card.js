@@ -8,7 +8,7 @@ function Card({ ingredient }) {
   const [name, setName] = useState(`${ingredient.name}`);
   const [newManualId, setNewManualId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const { dispatch, selectedMeal, apiKey } = useNutritionData();
+  const { dispatch, selectedMeal, mealTargets, apiKey } = useNutritionData();
 
   const apiKeyAvailable = apiKey != null && apiKey !== "";
 
@@ -83,6 +83,21 @@ function Card({ ingredient }) {
     setIsSaving(false);
   }
 
+  function handleMealChange(e) {
+    const newMeal = e.target.value;
+    if (newMeal.length > 1) {
+      return;
+    }
+    dispatch({
+      type: nutritionActionTypes.updateChosenIngredientMeal,
+      payload: {
+        name: ingredient.name,
+        oldMeal: selectedMeal,
+        newMeal: newMeal,
+      },
+    });
+  }
+
   return (
     <div
       className={`ingredient-card shadow-sm bg-body rounded border p-2 mb-2 ${
@@ -122,7 +137,29 @@ function Card({ ingredient }) {
           />
         )}
         {/* Delete, or save, ingredient */}
-        <div className="col text-end text-nowrap pe-0">
+        <div className="col text-end text-nowrap pe-0 d-flex">
+          {/* Change meal */}
+          <select
+            className="form-select form-select-sm me-2"
+            onChange={handleMealChange}
+          >
+            <option value="-" selected disabled hidden>
+              Byt måltid...
+            </option>
+            {mealTargets.map(
+              (mealTarget) =>
+                // Only show if other meal
+                mealTarget.meal !== selectedMeal && (
+                  <option
+                    value={mealTarget.meal}
+                    key={mealTarget.meal}
+                    disabled={mealTarget.meal === selectedMeal}
+                  >
+                    {mealTarget.description}
+                  </option>
+                )
+            )}
+          </select>
           {isNewItem && apiKeyAvailable && (
             <button
               className="btn btn-outline-primary btn-sm me-2"

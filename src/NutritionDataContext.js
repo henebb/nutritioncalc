@@ -25,6 +25,7 @@ const nutritionActionTypes = {
   updateChosenIngredient: "UPDATE_CHOSEN_INGREDIENT",
   updateChosenIngredientName: "UPDATE_CHOSEN_INGREDIENT_NAME",
   updateChosenIngredientId: "UPDATE_CHOSEN_INGREDIENT_ID",
+  updateChosenIngredientMeal: "UPDATE_CHOSEN_INGREDIENT_MEAL",
   loadPreDefIngredients: "LOAD_PREDEF_INGREDIENTS",
   addPreDefIngredient: "ADD_PREDEF_INGREDIENT",
   updatePreDefIngredient: "UPDATE_PREDEF_INGREDIENT",
@@ -97,7 +98,17 @@ function nutritionStoreReducer(state, action) {
         ),
         preDefinedIngredients: state.preDefinedIngredients,
       };
-
+    case nutritionActionTypes.updateChosenIngredientMeal:
+      return {
+        // Use "name" here, since it might be added as a manual ingredient,
+        // and then it has no "short"
+        chosenIngredients: state.chosenIngredients.map((i) =>
+          i.name === action.payload.name && i.meal === action.payload.oldMeal
+            ? { ...i, meal: action.payload.newMeal }
+            : i
+        ),
+        preDefinedIngredients: state.preDefinedIngredients,
+      };
     case nutritionActionTypes.updateChosenIngredient:
       const ingredientToUpdate = {
         ...action.payload,

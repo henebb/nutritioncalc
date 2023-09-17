@@ -11,6 +11,7 @@
 }
 
 .ingredient-card .col-form-label,
-.ingredient-card .col input[type="number"] {
+.ingredient-card .col input[type="number"],
+.ingredient-card .col select {
   font-size: 0.8em;
 }
