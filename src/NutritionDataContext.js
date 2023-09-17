@@ -28,6 +28,7 @@ const nutritionActionTypes = {
   loadPreDefIngredients: "LOAD_PREDEF_INGREDIENTS",
   addPreDefIngredient: "ADD_PREDEF_INGREDIENT",
   updatePreDefIngredient: "UPDATE_PREDEF_INGREDIENT",
+  setState: "SET_STATE",
 };
 
 function nutritionStoreReducer(state, action) {
@@ -178,6 +179,8 @@ function nutritionStoreReducer(state, action) {
           pi.short === preDefToUpdate.short ? preDefToUpdate : pi
         ),
       };
+    case nutritionActionTypes.setState:
+      return action.payload;
     default:
       return state;
   }

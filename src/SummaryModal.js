@@ -10,7 +10,7 @@ function SummaryModal({
     <div
       className="modal fade"
       id={summaryModalId}
-      tabindex="-1"
+      tabIndex="-1"
       aria-labelledby="summaryModalLabel"
       aria-hidden="true"
     >

@@ -8,7 +8,9 @@ function Card({ ingredient }) {
   const [name, setName] = useState(`${ingredient.name}`);
   const [newManualId, setNewManualId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const { dispatch, selectedMeal } = useNutritionData();
+  const { dispatch, selectedMeal, apiKey } = useNutritionData();
+
+  const apiKeyAvailable = apiKey != null && apiKey !== "";
 
   const calcTotal = useCallback(
     (value) => (value * 0.01 * ingredient.weight).toFixed(),
@@ -108,7 +110,7 @@ function Card({ ingredient }) {
             });
           }}
         />
-        {isNewItem && (
+        {isNewItem && apiKeyAvailable && (
           <input
             id="manual-new-id"
             type="text"
@@ -121,7 +123,7 @@ function Card({ ingredient }) {
         )}
         {/* Delete, or save, ingredient */}
         <div className="col text-end text-nowrap pe-0">
-          {isNewItem && (
+          {isNewItem && apiKeyAvailable && (
             <button
               className="btn btn-outline-primary btn-sm me-2"
               type="button"

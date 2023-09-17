@@ -1,6 +1,7 @@
 import { useState } from "react";
 import IdModal from "./IdModal";
 import { useNutritionData, nutritionActionTypes } from "./NutritionDataContext";
+import Settings from "./Settings";
 
 function AddIngredient() {
   const [name, setName] = useState("");
@@ -69,7 +70,7 @@ function AddIngredient() {
       <div className="row">
         <form className="col-8 add-form mb-2" onSubmit={handleSubmit}>
           <div className="row">
-            <div className="col pe-1">
+            <div className="col-6 pe-1">
               <label
                 className="visually-hidden visually-hidden-focusable"
                 htmlFor="newIngredientName"
@@ -85,14 +86,17 @@ function AddIngredient() {
                 placeholder="Ingrediens"
               />
             </div>
-            <div className="col ps-1">
+            <div className="col-4 ps-1">
               <button
                 type="submit"
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary btn-sm text-nowrap"
                 disabled={!name}
               >
                 Lägg till
               </button>
+            </div>
+            <div className="col-2">
+              <Settings modalId="settingsModal" />
             </div>
           </div>
         </form>
