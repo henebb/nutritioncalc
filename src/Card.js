@@ -85,7 +85,8 @@ function Card({ ingredient }) {
 
   function handleMealChange(e) {
     const newMeal = e.target.value;
-    if (newMeal.length > 1) {
+    if (newMeal.length <= 1) {
+      console.log("HERE", newMeal);
       return;
     }
     dispatch({
@@ -141,9 +142,10 @@ function Card({ ingredient }) {
           {/* Change meal */}
           <select
             className="form-select form-select-sm me-2"
+            defaultValue="-"
             onChange={handleMealChange}
           >
-            <option value="-" selected disabled hidden>
+            <option value="-" disabled hidden>
               Byt måltid...
             </option>
             {mealTargets.map(
