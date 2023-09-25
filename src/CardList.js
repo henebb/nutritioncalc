@@ -12,7 +12,7 @@ function CardList() {
       : [];
 
   return (
-    <div className="card-list-container">
+    <div className="card-list-container d-flex flex-wrap">
       {ingredientsForSelectedMeal.length > 0 ? (
         ingredientsForSelectedMeal.map((ingredient) => (
           // use "name" as key, since "short" might not be set (if added manually)

@@ -101,9 +101,10 @@ function Card({ ingredient }) {
 
   return (
     <div
-      className={`ingredient-card shadow-sm bg-body rounded border p-2 mb-2 ${
+      className={`ingredient-card shadow-sm bg-body rounded border p-2 mb-2 me-2 ${
         isNewItem ? "border-primary" : null
       }`}
+      style={{ flex: "0 0 400px" }}
     >
       <div className="row ms-1 me-0 mb-2 justify-content-around">
         <input
